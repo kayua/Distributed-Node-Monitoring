@@ -60,17 +60,21 @@ class Server:
         status = os.popen(cmd).read()
 
         if status.index('leader'):
+
             print("    - Condicao de lideranca detectada")
             return True
 
         else:
+
             print("    - Condicao de lideranca não detectada")
             return False
 
     def stop_zookeeper(self):
 
+        print("  Parando servidor Zookeeper")
         command = 'apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
+        print("    - Servidor Zookeeper parado")
 
     def get_zookeeper_signal_sync(self):
 
