@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import subprocess
 import time
@@ -16,6 +17,7 @@ DEFAULT_OUTPUT = "/dev/null"
 DEFAULT_ERR = "/dev/null"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
+TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 
 
 class DaemonServer(Daemon):
@@ -223,6 +225,37 @@ def main():
     parser.add_argument('--status', required=False)
 
     args = parser.parse_args()
+
+    if args.log == logging.DEBUG:
+
+        logging.basicConfig(format='%(asctime)s %(levelname)s {%(module)s} [%(funcName)s] %(message)s',
+                            datefmt=TIME_FORMAT, level=args.log)
+
+    else:
+
+        logging.basicConfig(format='%(asctime)s %(message)s',
+                            datefmt=TIME_FORMAT, level=args.log)
+
+    logging.info("")
+    logging.info("INPUT")
+    logging.info("---------------------")
+    logging.info("\t logging level : %s" % args.log)
+    logging.info("\t unique id     : %s" % args.id)
+    logging.info("\t sleep secs    : %s" % args.sleep)
+    logging.info("")
+
+    pid_file = "/tmp/daemon_server%s.pid" % args.id
+    stdout = "/tmp/daemon_server%s.stdout" % args.id
+    stderr = "/tmp/daemon_daemon_%s.stderr" % args.id
+    __stdin = open('daemon_std_in.txt', 'w')
+    __stdin.close()
+
+    logging.info("FILES")
+    logging.info("---------------------")
+    logging.info("\t pid_file      : %s" % pid_file)
+    logging.info("\t stdout        : %s" % stdout)
+    logging.info("\t stderr        : %s" % stderr)
+    logging.info("")
 
 daemon = DaemonServer("192.168.1.102:2181", "kayua")
 daemon.initialize_client_server()
