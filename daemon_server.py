@@ -58,14 +58,18 @@ class Server:
         print("  Verificando condicao de liderança")
         cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
         status = os.popen(cmd).read()
+        try:
 
-        if status.index('leader'):
+            if status.index('leader'):
 
-            print("    - Condicao de lideranca detectada")
-            return True
+                print("    - Condicao de lideranca detectada")
+                return True
 
-        else:
+            else:
 
+                print("    - Condicao de lideranca não detectada")
+                return False
+        except:
             print("    - Condicao de lideranca não detectada")
             return False
 
