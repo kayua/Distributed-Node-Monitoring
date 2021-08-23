@@ -78,32 +78,38 @@ class Server:
 
     def get_zookeeper_signal_sync(self):
 
-        data, stat = self.zookeeper_client.get("/signal_sync")
-        print("sincronizando")
+        print("  Verificando sinal de sicronizacao")
+        signal_sync, _ = self.zookeeper_client.get("/signal_sync")
 
-        if data == b'True':
+        if signal_sync == b'True':
 
-            print("Sinal positivo")
+            print("    - Sinal positivo")
             return True
 
         else:
 
-            print("Sinal negativo")
+            print("    - Sinal negativo")
             return False
 
     def set_zookeeper_signal_sync(self):
 
+        print("  Ativando sinal de sincronizacao")
         self.zookeeper_client.set("/signal_sync", b"True")
         time.sleep(int(DEFAULT_TICK / 2))
         self.zookeeper_client.set("/signal_sync", b"False")
 
-    def write_database(self):
+    @staticmethod
+    def write_database():
+
+        print("  Gravando dados no banco")
         a = open("tex.txt", "+a")
         a.write("test\n")
         a.close()
         pass
 
     def background_leader(self):
+
+        print("        MODO LIDER ATIVADO")
 
         while True:
 
@@ -125,7 +131,7 @@ class Server:
             time.sleep(DEFAULT_TICK)
 
     def background_follower(self):
-
+        print("        MODO SEGUIDOR ATIVADO")
         while True:
 
             if self.zookeeper_is_running():
@@ -157,7 +163,3 @@ class Server:
 daemon = Server("192.168.1.102:2181", "kayua")
 daemon.initialize_client_server()
 daemon.background_follower()
-
-zk = KazooClient(hosts='192.168.1.102:2181,192.168.1.104:2181,192.168.1.105:2181', read_only=True)
-zk.start()
-data, stat = zk.get("/signal_sync")
