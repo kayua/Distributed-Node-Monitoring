@@ -86,13 +86,15 @@ class Server:
 
         while True:
 
+            print("Aguardando ordem de inicio")
+
             if self.zookeeper_client.exists("/server_hour"):
 
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:"+time_now.decode('utf-8'))
                 break
 
-
+            time.sleep(2)
 
     def get_zookeeper_signal_sync(self):
 
@@ -160,6 +162,8 @@ class Server:
     def background_follower(self):
 
         print("        MODO SEGUIDOR ATIVADO")
+        self.wait_setting_system()
+
         while True:
 
             if self.zookeeper_is_running():
