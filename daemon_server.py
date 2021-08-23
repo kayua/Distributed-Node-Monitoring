@@ -30,7 +30,7 @@ class Server:
             return True
 
         else:
-            
+
             print("    - Zookeper não está rodando:")
             return True
 
@@ -38,36 +38,33 @@ class Server:
 
         print("  Inicializando client Zookeeper")
         self.start_zookeeper()
-        self.zookeeper_client = KazooClient(hosts='192.168.1.102:2181,192.168.1.104:2181,192.168.1.105:2181', read_only=True)
+        self.zookeeper_client = KazooClient(hosts='192.168.1.102:2181,192.168.1.104:2181,192.168.1.105:2181',
+                                            read_only=True)
         self.zookeeper_client.start()
         print("    - Cliente Zookeeper iniciado")
 
     def start_zookeeper(self):
 
+        print("  Inicializando Servidor Zookeeper")
         command = 'chmod +x apache-zookeeper-3.6.1/bin/./*'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
         cmd = "apache-zookeeper-3.6.1/bin/./zkServer.sh start"
         subprocess.call(cmd, shell=True)
-        print("Zookeeper Ativado")
+        print("    - Servidor Inicializado")
 
     @staticmethod
     def zookeeper_token_leader():
 
+        print("  Verificando condicao de liderança")
         cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
         status = os.popen(cmd).read()
-        print("Eu sou o Lider?     kkkkk")
-        try:
 
-            if status.index('leader'):
-                print("Sou líder")
-                return True
+        if status.index('leader'):
+            print("    - Condicao de lideranca detectada")
+            return True
 
-            else:
-                print("Sou seguidor")
-                return False
-
-        except:
-
+        else:
+            print("    - Condicao de lideranca não detectada")
             return False
 
     def stop_zookeeper(self):
@@ -140,7 +137,6 @@ class Server:
                     print("Não sou lider")
 
                     if self.get_zookeeper_signal_sync():
-
                         print("Estado de sincronização")
                         self.write_database()
 
