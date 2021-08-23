@@ -21,24 +21,26 @@ class Server:
     @staticmethod
     def zookeeper_is_running():
 
-        print("Verificando se o Zookeeper está rodando:")
+        print("  Verificando se o Zookeeper está rodando:")
         process_status = [proc for proc in psutil.process_iter() if proc.name() == 'zkServer.sh']
 
         if process_status:
 
-            print("   - Zookeper está rodando")
+            print("    - Zookeper está rodando")
             return True
 
         else:
             
-            print("   - Zookeper não está rodando:")
+            print("    - Zookeper não está rodando:")
             return True
 
     def initialize_client_server(self):
 
+        print("  Inicializando client Zookeeper")
         self.start_zookeeper()
         self.zookeeper_client = KazooClient(hosts='192.168.1.102:2181,192.168.1.104:2181,192.168.1.105:2181', read_only=True)
         self.zookeeper_client.start()
+        print("    - Cliente Zookeeper iniciado")
 
     def start_zookeeper(self):
 
