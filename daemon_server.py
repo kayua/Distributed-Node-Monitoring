@@ -131,6 +131,7 @@ class Server:
             time.sleep(DEFAULT_TICK)
 
     def background_follower(self):
+
         print("        MODO SEGUIDOR ATIVADO")
         while True:
 
