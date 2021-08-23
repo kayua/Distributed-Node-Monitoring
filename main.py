@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 from kazoo.client import KazooClient
 
@@ -57,6 +58,11 @@ def create_settings_servers(list_servers):
     zookeeper_settings_pointer.close()
 
 
+def get_date_hour():
+
+    return str(datetime.today())
+
+
 def register_metadata(hosts, num_servers):
 
     print("     Creating registers of session")
@@ -65,11 +71,15 @@ def register_metadata(hosts, num_servers):
     zookeeper_client.start()
     zookeeper_client.create("/number_clients", b"0")
     number_servers = num_servers.encode("utf-8")
-    zookeeper_client.create("/number_servers", number_servers )
+    zookeeper_client.create("/number_servers", number_servers)
 
     for i in range(len(num_servers)):
+
         server_name = "/server" + str(i)
         zookeeper_client.create(server_name, b"False")
+
+    zookeeper_client.create("/signal_sync", b"False")
+    zookeeper_client.create("/server_hour", get_date_hour().encode('utf-8'))
 
 
 def clear_metadata(hosts):
@@ -83,7 +93,7 @@ def clear_metadata(hosts):
     for i in range(0, int(number_clients.decode("utf-8"))):
 
         client_name = "/client" + str(i)
-        zookeeper_client.create(client_name, b"False")
+        zookeeper_client.delete(client_name, recursive=True)
 
     zookeeper_client.delete("/number_servers", recursive=True)
 
@@ -92,9 +102,11 @@ def clear_metadata(hosts):
     for i in range(0, int(number_servers.decode("utf-8"))):
 
         server_name = "/server" + str(i)
-        zookeeper_client.create(server_name, b"False")
+        zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete("/number_servers", recursive=True)
+    zookeeper_client.delete("/signal_sync", recursive=True)
+    zookeeper_client.delete("/server_hour", recursive=True)
 
 
 def start_servers():
@@ -123,19 +135,14 @@ def start_servers():
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
         channel.remote_start_daemon(str(i), host_list, password_list[i])
 
+    exit()
     print("     Create registers of session")
 
     zk = KazooClient(hosts=host_list, read_only=True)
     zk.start()
-    print(zk.get("/number_clients"))
-    exit()
+
     zk.create("/number_clients", b"0")
     zk.create("/number_servers", b"0")
-
-    for i in range(len(hostname_list)):
-
-        server_name = "/server"+str(i)
-        zk.create(server_name, b"False")
 
 
 def main():
@@ -188,4 +195,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     sys.exit(main())
