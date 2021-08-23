@@ -112,7 +112,8 @@ class Server:
             return False
 
     def get_list_active_nodes(self):
-        pass
+
+        for i in range(0, 10):
 
     def set_zookeeper_signal_sync(self):
 
@@ -179,6 +180,7 @@ class Server:
                     print("Não sou lider")
 
                     if self.get_zookeeper_signal_sync():
+
                         print("Estado de sincronização")
                         self.write_database()
 

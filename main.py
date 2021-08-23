@@ -1,20 +1,7 @@
 import sys
-
 from kazoo.client import KazooClient
-from pyfiglet import Figlet
 from lib.interface.channel import Channel
-
-
-class View:
-
-    def __init__(self, title='Monitor Nodes'):
-
-        self.title = title
-
-    def print_view(self):
-
-        f = Figlet(font='slant')
-        print(f.renderText(self.title))
+from lib.interface.view import View, print_help
 
 
 def add_set_servers(hostname, username, password):
@@ -105,21 +92,7 @@ def main():
     print("")
     view = View()
     view.print_view()
-
-    print("")
-    print(" Monitor Servers:\n")
-    print("     - ServerInstall     hostname userName password")
-    print("     - ServerStart")
-    print("     - ServerStop \n")
-    print(" Nodes clients:\n")
-    print("     - ClientInstall     hostname userName password")
-    print("     - ClientAdd         hostname userName password")
-    print("     - ClientRemove      hostname userName password\n")
-    print(" Monitor:\n")
-    print("     - AllState")
-    print("     - ClientState       hostname userName password")
-    print("     - MonitoSettings    \n\n")
-    print("")
+    print_help()
     print("Saved Servers:", end=" ")
 
     saved_nodes = get_set_servers()
