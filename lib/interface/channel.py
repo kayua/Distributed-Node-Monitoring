@@ -1,9 +1,7 @@
 import subprocess
-import time
-
-from paramiko import SSHClient
 import paramiko
 from scp import SCPClient
+from paramiko import SSHClient
 
 
 class Channel:
@@ -89,8 +87,12 @@ class Channel:
         self.send_file("monitor.tar.gz", "monitor.tar.gz")
         self.decompress_file()
 
+    def remote_start_daemon(self, id_processing, host, password):
 
-
-
-
-
+        _, stdout, stderr = self.connection_ssh.exec_command('su')
+        _.write('kayua\n')
+        command = 'python3 monitor/daemon_server.py --start true --id '+id_processing + ' --password '+password
+        command = command + " --host "+host
+        print(command)
+        _, stdout, stderr = self.connection_ssh.exec_command(command)
+        _.flush()
