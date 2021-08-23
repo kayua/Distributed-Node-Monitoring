@@ -101,13 +101,10 @@ class DaemonServer(Daemon):
             print("Aguardando ordem de inicio")
 
             if self.zookeeper_client.exists("/server_hour"):
+
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
-            a = open("saida.txt", "+a")
-            a.write("testando\n")
-            a.close()
-            time.sleep(2)
 
     def get_zookeeper_signal_sync(self):
 
@@ -238,12 +235,14 @@ def main():
 
     if args.log == logging.DEBUG:
 
-        logging.basicConfig(format='%(asctime)s %(levelname)s {%(module)s} [%(funcName)s] %(message)s',
+        logging.basicConfig(filename="logfile.log", filemode='+a',
+                            format='%(asctime)s %(levelname)s {%(module)s} [%(funcName)s] %(message)s',
                             datefmt=TIME_FORMAT, level=args.log)
 
     else:
 
-        logging.basicConfig(format='%(asctime)s %(message)s',
+        logging.basicConfig(filename="logfile.log", filemode='+a',
+                            format='%(asctime)s %(message)s',
                             datefmt=TIME_FORMAT, level=args.log)
 
     logging.info("")
@@ -269,6 +268,7 @@ def main():
     logging.info("")
 
     if sys.argv[1] == '--start':
+
         print("Iniciando daemon")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
