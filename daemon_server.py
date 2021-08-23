@@ -110,17 +110,17 @@ class DaemonServer(Daemon):
 
     def get_zookeeper_signal_sync(self):
 
-        print("  Verificando sinal de sicronizacao")
+        logging.info("Checking signal sync")
         signal_sync, _ = self.zookeeper_client.get("/signal_sync")
 
         if signal_sync == b'True':
 
-            print("    - Sinal positivo")
+            logging.info("signal sync received")
             return True
 
         else:
 
-            print("    - Sinal negativo")
+            logging.info("signal sync not received")
             return False
 
     def set_zookeeper_signal_sync(self):
