@@ -58,6 +58,7 @@ class Server:
         print("  Verificando condicao de liderança")
         cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
         status = os.popen(cmd).read()
+
         try:
 
             if status.index('leader'):
