@@ -35,40 +35,40 @@ class DaemonServer(Daemon):
     @staticmethod
     def zookeeper_is_running():
 
-        logging.info("\t        Cheking if Zookeeper is running")
+        logging.info("Cheking if Zookeeper is running")
         process_status = [proc for proc in psutil.process_iter() if proc.name() == 'zkServer.sh']
 
         if process_status:
 
-            logging.info("\t    - Zookeeper running")
+            logging.info("Zookeeper running")
             return True
 
         else:
 
-            logging.info("\t    - Zookeeper not running")
+            logging.info("Zookeeper not running")
             return True
 
     def initialize_client_server(self):
 
-        print("  Inicializando client Zookeeper")
+        logging.info("Starting Zookeeper client")
         self.start_zookeeper()
         self.zookeeper_client = KazooClient(hosts=self.zookeeper_server_list, read_only=True)
         self.zookeeper_client.start()
-        print("    - Cliente Zookeeper iniciado")
+        logging.info("Started Zookeeper client")
 
     def start_zookeeper(self):
 
-        print("  Inicializando Servidor Zookeeper")
+        logging.info("Starting Zookeeper Server")
         command = 'chmod +x apache-zookeeper-3.6.1/bin/./*'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
         cmd = "apache-zookeeper-3.6.1/bin/./zkServer.sh start"
         subprocess.call(cmd, shell=True)
-        print("    - Servidor Inicializado")
+        logging.info("Started Zookeeper Server")
 
     @staticmethod
     def zookeeper_token_leader():
 
-        print("  Verificando condicao de liderança")
+        logging.info("Checking token leader")
         cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
         status = os.popen(cmd).read()
 
@@ -76,23 +76,25 @@ class DaemonServer(Daemon):
 
             if status.index('leader'):
 
-                print("    - Condicao de lideranca detectada")
+                logging.info("Leader token detected")
                 return True
 
             else:
 
-                print("    - Condicao de lideranca não detectada")
+                logging.info("Leader token not detected")
                 return False
+
         except:
-            print("    - Condicao de lideranca não detectada")
+
+            logging.info("Leader token not detected")
             return False
 
     def stop_zookeeper(self):
 
-        print("  Parando servidor Zookeeper")
+        logging.info("Stopping Zookeeper Server")
         command = 'apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
-        print("    - Servidor Zookeeper parado")
+        logging.info("Stopped Zookeeper Server")
 
     def wait_setting_system(self):
 
