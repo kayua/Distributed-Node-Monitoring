@@ -111,10 +111,6 @@ class Server:
             print("    - Sinal negativo")
             return False
 
-    def get_list_active_nodes(self):
-
-        for i in range(0, 10):
-
     def set_zookeeper_signal_sync(self):
 
         print("  Ativando sinal de sincronizacao")

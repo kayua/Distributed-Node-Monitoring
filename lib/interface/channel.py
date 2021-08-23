@@ -34,7 +34,7 @@ class Channel:
             _, stdout, stderr = self.connection_ssh.exec_command('su')
             _.write('kayua\n')
             _, stdout, stderr = self.connection_ssh.exec_command('chmod +x monitor/apache-zookeeper-3.6.1/bin/*')
-            _, stdout, stderr = self.connection_ssh.exec_command('monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start')
+            _, stdout, stderr = self.connection_ssh.exec_command('python3 daemon_server.py')
             _.flush()
             return 0
 
