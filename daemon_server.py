@@ -4,11 +4,10 @@ import os
 import subprocess
 import sys
 import time
-from datetime import datetime
-
 import psutil
-from kazoo.client import KazooClient
 
+from datetime import datetime
+from kazoo.client import KazooClient
 from lib.daemonize.daemon import Daemon
 
 DEFAULT_TICK = 10
@@ -19,6 +18,7 @@ DEFAULT_ERR = "/dev/null"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
 TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
+LOG_LEVEL = logging.DEBUG
 
 
 class DaemonServer(Daemon):
@@ -105,7 +105,9 @@ class DaemonServer(Daemon):
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
-
+            a = open("saida.txt", "+a")
+            a.write("testando\n")
+            a.close()
             time.sleep(2)
 
     def get_zookeeper_signal_sync(self):
@@ -207,6 +209,7 @@ class DaemonServer(Daemon):
 
 
 def main():
+
     parser = argparse.ArgumentParser(description='Daemon Server')
 
     help_msg = "Process identification"
@@ -222,13 +225,15 @@ def main():
     parser.add_argument('--hosts', help=help_msg, default=DEFAULT_SERVER_LIST)
 
     help_msg = "SuperUser Password"
-    parser.add_argument('--hosts', help=help_msg, default=DEFAULT_PASSWORD)
+    parser.add_argument('--password', help=help_msg, default=DEFAULT_PASSWORD)
 
     parser.add_argument('--start', required=False)
 
     parser.add_argument('--stop', required=False)
 
     parser.add_argument('--restart', required=False)
+
+    parser.add_argument("--log", "-l", help=help_msg, default=logging.INFO, type=int)
 
     args = parser.parse_args()
 
@@ -247,39 +252,40 @@ def main():
     logging.info("---------------------")
     logging.info("\t logging level : %s" % args.log)
     logging.info("\t unique id     : %s" % args.id)
-    logging.info("\t sleep secs    : %s" % args.sleep)
+    logging.info("\t sleep secs    : %s" % args.tick)
     logging.info("")
 
     pid_file = "/tmp/daemon_server%s.pid" % args.id
     stdout = "/tmp/daemon_server%s.stdout" % args.id
     stderr = "/tmp/daemon_daemon_%s.stderr" % args.id
-    stdin = "/tmp/daemon_daemon_%s.stdin" % args.id
+    stdin = open('input_daemon.txt', 'w')
+    stdin.close()
 
     logging.info("FILES")
     logging.info("---------------------")
     logging.info("\t pid_file      : %s" % pid_file)
     logging.info("\t stdout        : %s" % stdout)
     logging.info("\t stderr        : %s" % stderr)
-    logging.info("\t stdin       : %s" % stdin)
+    logging.info("\t stdin       : %s" % "input_daemon.txt")
     logging.info("")
 
     if sys.argv[1] == '--start':
-
-        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+        print("Iniciando daemon")
+        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
         daemon_server.start()
 
     elif sys.argv[1] == '--stop':
 
-        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
         daemon_server.stop()
 
     elif sys.argv[1] == '--restart':
 
-        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
         daemon_server.restart()
@@ -290,7 +296,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#daemon = DaemonServer("192.168.1.102:2181", "kayua")
-#daemon.initialize_client_server()
-#daemon.background_follower()
