@@ -194,7 +194,6 @@ class DaemonServer(Daemon):
 
             time.sleep(DEFAULT_TICK)
 
-
     def run(self):
 
         self.wait_setting_system()
@@ -220,11 +219,14 @@ def main():
     help_msg = "SuperUser Password"
     parser.add_argument('--password', help=help_msg, default=DEFAULT_PASSWORD)
 
-    parser.add_argument('--start', required=False)
+    help_msg = "Start server in background"
+    parser.add_argument('--start', help=help_msg, required=False)
 
-    parser.add_argument('--stop', required=False)
+    help_msg = "Stop server in background"
+    parser.add_argument('--stop', help=help_msg, required=False)
 
-    parser.add_argument('--restart', required=False)
+    help_msg = "Restart server"
+    parser.add_argument('--restart', help=help_msg, required=False)
 
     parser.add_argument("--log", "-l", help=help_msg, default=logging.INFO, type=int)
 
