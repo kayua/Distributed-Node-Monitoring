@@ -1,3 +1,4 @@
+import argparse
 import os
 import subprocess
 import time
@@ -8,7 +9,7 @@ from kazoo.client import KazooClient
 
 from lib.daemonize.daemon import Daemon
 
-DEFAULT_TICK = 5
+DEFAULT_TICK = 10
 DEFAULT_TIMEOUT = 200
 DEFAULT_INPUT = "/dev/null"
 DEFAULT_OUTPUT = "/dev/null"
@@ -17,7 +18,7 @@ DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
 
 
-class Server(Daemon):
+class DaemonServer(Daemon):
 
     def __init__(self, pid_file, st_din=DEFAULT_INPUT, stdout=DEFAULT_OUTPUT, stderr=DEFAULT_ERR,
                  server_list=DEFAULT_SERVER_LIST, password=DEFAULT_PASSWORD):
@@ -198,7 +199,27 @@ class Server(Daemon):
             time.sleep(DEFAULT_TICK)
             print("aguardando relógio")
 
+    def run(self):
 
-daemon = Server("192.168.1.102:2181", "kayua")
+        self.wait_setting_system()
+        self.background_follower()
+
+
+def main():
+
+    parser = argparse.ArgumentParser(description='Daemon Server')
+    help_msg = "logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
+    parser.add_argument("--log", "-l", help=help_msg, default=logging.INFO, type=int)
+    help_msg = "unique id (str), required for running multiple daemons on the host"
+    parser.add_argument("--id", "-i", help=help_msg, default="default", type=str)
+    help_msg = "loop sleep seconds (int)"
+    parser.add_argument("--sleep", "-s", help=help_msg, default=DEFAULT_SLEEP_SECONDS, type=int)
+    parser.add_argument('--start', action='store', dest='ip_address', default=DEFAULT_IP_ADDRESS, required=False)
+    parser.add_argument('--stop', required=False)
+    parser.add_argument('--restart', required=False)
+    parser.add_argument('--status', required=False)
+    args = parser.parse_args()
+
+daemon = DaemonServer("192.168.1.102:2181", "kayua")
 daemon.initialize_client_server()
 daemon.background_follower()
