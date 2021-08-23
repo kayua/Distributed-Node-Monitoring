@@ -2,7 +2,8 @@ import sys
 from datetime import datetime
 from kazoo.client import KazooClient
 from lib.interface.channel import Channel
-from lib.interface.view import View, print_help
+from lib.interface.view import View
+from lib.interface.view import print_help
 
 DEFAULT_SERVER_LOGS = "servers/server_list.log"
 DEFAULT_SETTINGS = "settings/config.txt"
