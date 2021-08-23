@@ -84,18 +84,18 @@ class Channel:
     def remote_start_daemon(self, id_processing, host, password):
 
         _, stdout, stderr = self.connection_ssh.exec_command('sudo -S chmod +x monitor/apache-zookeeper-3.6.1/bin/*')
-        time.sleep(3)
+        time.sleep(5)
         _.write('kayua\n')
         _.flush()
 
         _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start')
-        time.sleep(3)
+        time.sleep(5)
         _.write('kayua\n')
         _.flush()
 
         command = 'sudo -S python3 monitor/daemon_server.py --start true --id '+id_processing + ' --password '+password
         command = command + " --host "+host
         _, stdout, stderr = self.connection_ssh.exec_command(command)
-        time.sleep(3)
+        time.sleep(5)
         _.write('kayua\n')
         _.flush()

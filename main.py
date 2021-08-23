@@ -1,5 +1,4 @@
 import sys
-from kazoo.client import KazooClient
 from lib.interface.channel import Channel
 from lib.interface.view import View, print_help
 
@@ -80,7 +79,6 @@ def start_servers():
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
         channel.remote_start_daemon(str(i), host_list, "kayua")
-
 
 
 def main():
