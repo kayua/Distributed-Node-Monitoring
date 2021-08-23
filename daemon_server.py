@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+from datetime import datetime
 
 import psutil
 from kazoo.client import KazooClient
@@ -81,6 +82,18 @@ class Server:
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
         print("    - Servidor Zookeeper parado")
 
+    def wait_setting_system(self):
+
+        while True:
+
+            if self.zookeeper_client.exists("/server_hour"):
+
+                time_now, _ = self.zookeeper_client.get("/server_hour")
+                self.write_database("Monitoring started at:"+time_now.decode('utf-8'))
+                break
+
+
+
     def get_zookeeper_signal_sync(self):
 
         print("  Verificando sinal de sicronizacao")
@@ -96,15 +109,24 @@ class Server:
             print("    - Sinal negativo")
             return False
 
+    def get_list_active_nodes(self):
+        pass
+
     def set_zookeeper_signal_sync(self):
 
         print("  Ativando sinal de sincronizacao")
         self.zookeeper_client.set("/signal_sync", b"True")
+        self.zookeeper_client.set("/server_hour", self.get_date_hour().encode('utf-8'))
         time.sleep(int(DEFAULT_TICK / 2))
         self.zookeeper_client.set("/signal_sync", b"False")
 
     @staticmethod
-    def write_database():
+    def get_date_hour():
+
+        return str(datetime.today())
+
+    @staticmethod
+    def write_database(text):
 
         print("  Gravando dados no banco")
         a = open("tex.txt", "+a")

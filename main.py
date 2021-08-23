@@ -88,10 +88,11 @@ def start_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Starting")
+        print("         - " + hostname_list[i] + " Started")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
         channel.remote_access("")
+
     print("\n")
 
     zk = KazooClient(hosts=hostname_list[0]+':2181', read_only=True)
