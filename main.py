@@ -81,11 +81,6 @@ def start_servers():
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
         channel.remote_start_daemon(str(i), host_list, "kayua")
 
-    print("\n")
-
-    zk = KazooClient(hosts=host_list, read_only=True)
-    zk.start()
-    zk.create("/signal_sync", b"False")
 
 
 def main():

@@ -1,4 +1,6 @@
 import subprocess
+import time
+
 import paramiko
 from scp import SCPClient
 from paramiko import SSHClient
@@ -27,14 +29,6 @@ class Channel:
             return 1
 
     def remote_access(self, cmd, sudo=False):
-
-        if sudo:
-            _, stdout, stderr = self.connection_ssh.exec_command('su')
-            _.write('kayua\n')
-            _, stdout, stderr = self.connection_ssh.exec_command('chmod +x monitor/apache-zookeeper-3.6.1/bin/*')
-            _, stdout, stderr = self.connection_ssh.exec_command('python3 daemon_server.py')
-            _.flush()
-            return 0
 
         _, stdout, stderr = self.connection_ssh.exec_command(cmd)
 
@@ -90,21 +84,18 @@ class Channel:
     def remote_start_daemon(self, id_processing, host, password):
 
         _, stdout, stderr = self.connection_ssh.exec_command('sudo -S chmod +x monitor/apache-zookeeper-3.6.1/bin/*')
+        time.sleep(3)
         _.write('kayua\n')
         _.flush()
 
         _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start')
+        time.sleep(3)
         _.write('kayua\n')
         _.flush()
 
         command = 'sudo -S python3 monitor/daemon_server.py --start true --id '+id_processing + ' --password '+password
         command = command + " --host "+host
-        print(command)
         _, stdout, stderr = self.connection_ssh.exec_command(command)
+        time.sleep(3)
         _.write('kayua\n')
         _.flush()
-
-        print(stderr.read())
-
-
-        print(stdout.read())
