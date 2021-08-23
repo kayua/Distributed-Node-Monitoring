@@ -125,7 +125,7 @@ class DaemonServer(Daemon):
 
     def set_zookeeper_signal_sync(self):
 
-        print("  Ativando sinal de sincronizacao")
+        logging.info("Send signal sync")
         self.zookeeper_client.set("/signal_sync", b"True")
         self.zookeeper_client.set("/server_hour", self.get_date_hour().encode('utf-8'))
         time.sleep(int(DEFAULT_TICK / 2))
