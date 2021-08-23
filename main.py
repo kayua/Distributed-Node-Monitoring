@@ -83,7 +83,7 @@ def start_servers():
 
     print("\n")
 
-    zk = KazooClient(hosts=hostname_list[0]+':2181', read_only=True)
+    zk = KazooClient(hosts=host_list, read_only=True)
     zk.start()
     zk.create("/signal_sync", b"False")
 
