@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import subprocess
+import sys
 import time
 from datetime import datetime
 
@@ -22,10 +23,10 @@ TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 
 class DaemonServer(Daemon):
 
-    def __init__(self, pid_file, st_din=DEFAULT_INPUT, stdout=DEFAULT_OUTPUT, stderr=DEFAULT_ERR,
+    def __init__(self, pid_file, stdin=DEFAULT_INPUT, stdout=DEFAULT_OUTPUT, stderr=DEFAULT_ERR,
                  server_list=DEFAULT_SERVER_LIST, password=DEFAULT_PASSWORD):
 
-        super().__init__(pid_file, std_in=st_din, std_out=stdout, std_err=stderr)
+        super().__init__(pid_file, std_in=stdin, std_out=stdout, std_err=stderr)
 
         self.password_super_user = password
         self.zookeeper_client = None
@@ -101,9 +102,8 @@ class DaemonServer(Daemon):
             print("Aguardando ordem de inicio")
 
             if self.zookeeper_client.exists("/server_hour"):
-
                 time_now, _ = self.zookeeper_client.get("/server_hour")
-                self.write_database("Monitoring started at:"+time_now.decode('utf-8'))
+                self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
 
             time.sleep(2)
@@ -188,7 +188,6 @@ class DaemonServer(Daemon):
                     print("Não sou lider")
 
                     if self.get_zookeeper_signal_sync():
-
                         print("Estado de sincronização")
                         self.write_database("test")
 
@@ -208,7 +207,6 @@ class DaemonServer(Daemon):
 
 
 def main():
-
     parser = argparse.ArgumentParser(description='Daemon Server')
 
     help_msg = "Process identification"
@@ -218,11 +216,19 @@ def main():
     parser.add_argument("--tick", "-t", help=help_msg, default=DEFAULT_TICK, type=int)
 
     help_msg = "Timeout connection"
-    parser.add_argument('--timeout', help_msg=help_msg, default=DEFAULT_TIMEOUT)
+    parser.add_argument('--timeout', help=help_msg, default=DEFAULT_TIMEOUT)
+
+    help_msg = "List servers"
+    parser.add_argument('--hosts', help=help_msg, default=DEFAULT_SERVER_LIST)
+
+    help_msg = "SuperUser Password"
+    parser.add_argument('--hosts', help=help_msg, default=DEFAULT_PASSWORD)
+
+    parser.add_argument('--start', required=False)
 
     parser.add_argument('--stop', required=False)
+
     parser.add_argument('--restart', required=False)
-    parser.add_argument('--status', required=False)
 
     args = parser.parse_args()
 
@@ -247,16 +253,44 @@ def main():
     pid_file = "/tmp/daemon_server%s.pid" % args.id
     stdout = "/tmp/daemon_server%s.stdout" % args.id
     stderr = "/tmp/daemon_daemon_%s.stderr" % args.id
-    __stdin = open('daemon_std_in.txt', 'w')
-    __stdin.close()
+    stdin = "/tmp/daemon_daemon_%s.stdin" % args.id
 
     logging.info("FILES")
     logging.info("---------------------")
     logging.info("\t pid_file      : %s" % pid_file)
     logging.info("\t stdout        : %s" % stdout)
     logging.info("\t stderr        : %s" % stderr)
+    logging.info("\t stdin       : %s" % stdin)
     logging.info("")
 
-daemon = DaemonServer("192.168.1.102:2181", "kayua")
-daemon.initialize_client_server()
-daemon.background_follower()
+    if sys.argv[1] == '--start':
+
+        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+                                     server_list=args.hosts, password=args.password)
+
+        daemon_server.start()
+
+    elif sys.argv[1] == '--stop':
+
+        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+                                     server_list=args.hosts, password=args.password)
+
+        daemon_server.stop()
+
+    elif sys.argv[1] == '--restart':
+
+        daemon_server = DaemonServer(pid_file=pid_file, stdin=stdin, stdout=stdout,
+                                     server_list=args.hosts, password=args.password)
+
+        daemon_server.restart()
+
+    else:
+        return -1
+
+
+if __name__ == '__main__':
+    main()
+
+#daemon = DaemonServer("192.168.1.102:2181", "kayua")
+#daemon.initialize_client_server()
+#daemon.background_follower()
