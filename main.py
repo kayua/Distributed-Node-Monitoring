@@ -31,7 +31,7 @@ def install_servers(hostname, user, password):
         return True
 
     channel.install_monitor()
-    channel.remote_access("", sudo=True)
+    channel.remote_access("")
 
 
 def install_client(hostname, user, password):
@@ -70,10 +70,10 @@ def register_metadata(hosts, num_servers):
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
     zookeeper_client.create("/number_clients", b"0")
-    number_servers = num_servers.encode("utf-8")
-    zookeeper_client.create("/number_servers", number_servers)
+    number_servers_byte = num_servers.encode("utf-8")
+    zookeeper_client.create("/number_servers", number_servers_byte)
 
-    for i in range(len(num_servers)):
+    for i in range(int(num_servers)):
 
         server_name = "/server" + str(i)
         zookeeper_client.create(server_name, b"False")
@@ -135,14 +135,8 @@ def start_servers():
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
         channel.remote_start_daemon(str(i), host_list, password_list[i])
 
-    exit()
+    register_metadata(host_list, str(len(hostname_list)))
     print("     Create registers of session")
-
-    zk = KazooClient(hosts=host_list, read_only=True)
-    zk.start()
-
-    zk.create("/number_clients", b"0")
-    zk.create("/number_servers", b"0")
 
 
 def main():
