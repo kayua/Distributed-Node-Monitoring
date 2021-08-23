@@ -139,7 +139,7 @@ class DaemonServer(Daemon):
     @staticmethod
     def write_database(text):
 
-        print("  Gravando dados no banco")
+        logging.info("Write database of monitoring")
         a = open("tex.txt", "+a")
         a.write("test\n")
         a.close()
@@ -147,7 +147,7 @@ class DaemonServer(Daemon):
 
     def background_leader(self):
 
-        print("        MODO LIDER ATIVADO")
+        logging.info("State change to leader state")
 
         while True:
 
@@ -170,35 +170,30 @@ class DaemonServer(Daemon):
 
     def background_follower(self):
 
-        print("        MODO SEGUIDOR ATIVADO")
         self.wait_setting_system()
+        logging.info("State change to follower state")
 
         while True:
 
             if self.zookeeper_is_running():
 
-                print("Iniciado e verificando")
-
                 if self.zookeeper_token_leader():
 
+                    logging.info("State change to leader state")
                     self.background_leader()
 
                 else:
 
-                    print("Não sou lider")
-
                     if self.get_zookeeper_signal_sync():
-                        print("Estado de sincronização")
+
                         self.write_database("test")
 
-                    print("Não sincronização")
             else:
 
                 self.start_zookeeper()
 
-            print("aguardando relógio")
             time.sleep(DEFAULT_TICK)
-            print("aguardando relógio")
+
 
     def run(self):
 
