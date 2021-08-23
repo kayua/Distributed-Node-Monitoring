@@ -103,7 +103,6 @@ class DaemonServer(Daemon):
             logging.info("waiting command for start")
 
             if self.zookeeper_client.exists("/server_hour"):
-
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
@@ -185,7 +184,6 @@ class DaemonServer(Daemon):
                 else:
 
                     if self.get_zookeeper_signal_sync():
-
                         self.write_database("test")
 
             else:
@@ -201,7 +199,6 @@ class DaemonServer(Daemon):
 
 
 def main():
-
     parser = argparse.ArgumentParser(description='Daemon Server')
 
     help_msg = "Process identification"
@@ -271,7 +268,6 @@ def main():
         logging.info("\t Starting daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
-
         daemon_server.start()
 
     elif sys.argv[1] == '--stop':
@@ -279,7 +275,6 @@ def main():
         logging.info("\t Stop daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
-
         daemon_server.stop()
 
     elif sys.argv[1] == '--restart':
@@ -287,10 +282,10 @@ def main():
         logging.info("\t Restart daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
-
         daemon_server.restart()
 
     else:
+
         return -1
 
 
