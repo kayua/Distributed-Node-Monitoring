@@ -78,7 +78,7 @@ def start_servers():
         print("         - " + hostname_list[i] + " Started")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
-        channel.remote_access("")
+        channel.remote_start_daemon(str(i),)
 
     print("\n")
 
