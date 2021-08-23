@@ -1,15 +1,17 @@
 import sys
 from datetime import datetime
-
 from kazoo.client import KazooClient
-
 from lib.interface.channel import Channel
 from lib.interface.view import View, print_help
+
+DEFAULT_SERVER_LOGS = "servers/server_list.log"
+DEFAULT_SETTINGS = "settings/config.txt"
+DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
 
 
 def add_set_servers(hostname, username, password):
 
-    file_servers = open("servers/server_list.log", "a+")
+    file_servers = open(DEFAULT_SERVER_LOGS, "a+")
     new_server = hostname + ":" + username + ":" + password + "-"
     file_servers.write(new_server)
     file_servers.close()
@@ -17,7 +19,7 @@ def add_set_servers(hostname, username, password):
 
 def get_set_servers():
 
-    file_servers = open("servers/server_list.log", "r")
+    file_servers = open(DEFAULT_SERVER_LOGS, "r")
     list_servers = file_servers.read().split("-")
     return list_servers[:-1]
 
@@ -47,7 +49,7 @@ def install_client(hostname, user, password):
 
 def create_settings_servers(list_servers):
 
-    zookeeper_settings_pointer = open("settings/config.txt", "+a")
+    zookeeper_settings_pointer = open(DEFAULT_SETTINGS, "+a")
     zookeeper_settings_pointer.write("\n")
 
     for i in range(len(list_servers)):
@@ -132,7 +134,7 @@ def start_servers():
         channel = Channel()
         print("         - " + hostname_list[i] + " Started")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
-        channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
+        channel.send_file(DEFAULT_SETTINGS, DEFAULT_ZOOKEEPER_SETTINGS)
         channel.remote_start_daemon(str(i), host_list, password_list[i])
 
     register_metadata(host_list, str(len(hostname_list)))
@@ -150,6 +152,7 @@ def main():
     saved_nodes = get_set_servers()
 
     for i in saved_nodes:
+
         print(i.split(":")[0], end=" ")
 
     print("\n")
