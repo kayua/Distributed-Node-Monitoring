@@ -100,7 +100,7 @@ class DaemonServer(Daemon):
 
         while True:
 
-            print("Aguardando ordem de inicio")
+            logging.info("waiting command for start")
 
             if self.zookeeper_client.exists("/server_hour"):
 
