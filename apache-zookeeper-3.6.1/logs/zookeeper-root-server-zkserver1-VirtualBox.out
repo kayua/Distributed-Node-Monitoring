@@ -1,0 +1,15 @@
+2020-10-12 16:44:34,181 [myid:] - INFO  [main:QuorumPeerConfig@173] - Reading configuration from: /home/zkserver1/Área de Trabalho/ICN-Stage_ensamble-master/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+2020-10-12 16:44:34,184 [myid:] - ERROR [main:QuorumPeerMain@98] - Invalid config, exiting abnormally
+org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Error processing /home/zkserver1/Área de Trabalho/ICN-Stage_ensamble-master/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+	at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:197)
+	at org.apache.zookeeper.server.quorum.QuorumPeerMain.initializeAndRun(QuorumPeerMain.java:124)
+	at org.apache.zookeeper.server.quorum.QuorumPeerMain.main(QuorumPeerMain.java:90)
+Caused by: java.lang.IllegalArgumentException: /home/zkserver1/Área de Trabalho/ICN-Stage_ensamble-master/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg file is missing
+	at org.apache.zookeeper.server.util.VerifyingFileFactory.doFailForNonExistingPath(VerifyingFileFactory.java:54)
+	at org.apache.zookeeper.server.util.VerifyingFileFactory.validate(VerifyingFileFactory.java:47)
+	at org.apache.zookeeper.server.util.VerifyingFileFactory.create(VerifyingFileFactory.java:39)
+	at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:179)
+	... 2 more
+Invalid config, exiting abnormally
+2020-10-12 16:44:34,186 [myid:] - INFO  [main:ZKAuditProvider@42] - ZooKeeper audit is disabled.
+2020-10-12 16:44:34,188 [myid:] - ERROR [main:ServiceUtils@42] - Exiting JVM with code 2

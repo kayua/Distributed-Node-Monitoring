@@ -1,0 +1,13 @@
+2020-09-21 20:06:31,685 [myid:] - INFO  [main:QuorumPeerConfig@173] - Reading configuration from: /home/vagrant/icn-stage/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+2020-09-21 20:06:31,695 [myid:] - ERROR [main:QuorumPeerMain@98] - Invalid config, exiting abnormally
+org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Error processing /home/vagrant/icn-stage/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+	at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:197)
+	at org.apache.zookeeper.server.quorum.QuorumPeerMain.initializeAndRun(QuorumPeerMain.java:124)
+	at org.apache.zookeeper.server.quorum.QuorumPeerMain.main(QuorumPeerMain.java:90)
+Caused by: java.lang.IllegalArgumentException: dataDir is not set
+	at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parseProperties(QuorumPeerConfig.java:443)
+	at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:193)
+	... 2 more
+Invalid config, exiting abnormally
+2020-09-21 20:06:31,698 [myid:] - INFO  [main:ZKAuditProvider@42] - ZooKeeper audit is disabled.
+2020-09-21 20:06:31,702 [myid:] - ERROR [main:ServiceUtils@42] - Exiting JVM with code 2
