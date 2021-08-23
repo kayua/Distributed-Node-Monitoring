@@ -208,16 +208,20 @@ class DaemonServer(Daemon):
 def main():
 
     parser = argparse.ArgumentParser(description='Daemon Server')
-    help_msg = "logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
-    parser.add_argument("--log", "-l", help=help_msg, default=logging.INFO, type=int)
-    help_msg = "unique id (str), required for running multiple daemons on the host"
+
+    help_msg = "Process identification"
     parser.add_argument("--id", "-i", help=help_msg, default="default", type=str)
-    help_msg = "loop sleep seconds (int)"
-    parser.add_argument("--sleep", "-s", help=help_msg, default=DEFAULT_SLEEP_SECONDS, type=int)
-    parser.add_argument('--start', action='store', dest='ip_address', default=DEFAULT_IP_ADDRESS, required=False)
+
+    help_msg = "Refresh rate [2, 100]"
+    parser.add_argument("--tick", "-t", help=help_msg, default=DEFAULT_TICK, type=int)
+
+    help_msg = "Timeout connection"
+    parser.add_argument('--timeout', help_msg=help_msg, default=DEFAULT_TIMEOUT)
+
     parser.add_argument('--stop', required=False)
     parser.add_argument('--restart', required=False)
     parser.add_argument('--status', required=False)
+
     args = parser.parse_args()
 
 daemon = DaemonServer("192.168.1.102:2181", "kayua")
