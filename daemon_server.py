@@ -6,18 +6,27 @@ from datetime import datetime
 import psutil
 from kazoo.client import KazooClient
 
+from lib.daemonize.daemon import Daemon
+
 DEFAULT_TICK = 5
 DEFAULT_TIMEOUT = 200
+DEFAULT_INPUT = "/dev/null"
+DEFAULT_OUTPUT = "/dev/null"
+DEFAULT_ERR = "/dev/null"
+DEFAULT_SERVER_LIST = ""
+DEFAULT_PASSWORD = ""
 
 
-class Server:
+class Server(Daemon):
 
-    def __init__(self, server_list, password):
+    def __init__(self, pid_file, st_din=DEFAULT_INPUT, stdout=DEFAULT_OUTPUT, stderr=DEFAULT_ERR,
+                 server_list=DEFAULT_SERVER_LIST, password=DEFAULT_PASSWORD):
+
+        super().__init__(pid_file, std_in=st_din, std_out=stdout, std_err=stderr)
 
         self.password_super_user = password
         self.zookeeper_client = None
         self.zookeeper_server_list = server_list
-        pass
 
     @staticmethod
     def zookeeper_is_running():
@@ -144,7 +153,7 @@ class Server:
                 if self.zookeeper_token_leader():
 
                     if self.set_zookeeper_signal_sync():
-                        self.write_database()
+                        self.write_database("Test")
 
                 else:
 
@@ -178,7 +187,7 @@ class Server:
                     if self.get_zookeeper_signal_sync():
 
                         print("Estado de sincronização")
-                        self.write_database()
+                        self.write_database("test")
 
                     print("Não sincronização")
             else:
