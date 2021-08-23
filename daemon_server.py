@@ -35,17 +35,17 @@ class DaemonServer(Daemon):
     @staticmethod
     def zookeeper_is_running():
 
-        print("  Verificando se o Zookeeper está rodando:")
+        logging.info("\t        Cheking if Zookeeper is running")
         process_status = [proc for proc in psutil.process_iter() if proc.name() == 'zkServer.sh']
 
         if process_status:
 
-            print("    - Zookeper está rodando")
+            logging.info("\t    - Zookeeper running")
             return True
 
         else:
 
-            print("    - Zookeper não está rodando:")
+            logging.info("\t    - Zookeeper not running")
             return True
 
     def initialize_client_server(self):
@@ -269,7 +269,7 @@ def main():
 
     if sys.argv[1] == '--start':
 
-        print("Iniciando daemon")
+        logging.info("\t Starting daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
@@ -277,6 +277,7 @@ def main():
 
     elif sys.argv[1] == '--stop':
 
+        logging.info("\t Stop daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
@@ -284,6 +285,7 @@ def main():
 
     elif sys.argv[1] == '--restart':
 
+        logging.info("\t Restart daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
 
