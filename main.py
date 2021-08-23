@@ -70,7 +70,7 @@ def start_servers():
         username_list.append(i.split(":")[1])
         password_list.append(i.split(":")[2])
 
-    host_list = ":2818,".join(hostname_list)+":2818"
+    host_list = ":2181,".join(hostname_list)+":2181"
     create_settings_servers(hostname_list)
 
     for i in range(len(hostname_list)):
@@ -79,7 +79,7 @@ def start_servers():
         print("         - " + hostname_list[i] + " Started")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file("settings/config.txt", "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg")
-        channel.remote_start_daemon(str(i), host_list, "kayua" )
+        channel.remote_start_daemon(str(i), host_list, "kayua")
 
     print("\n")
 
