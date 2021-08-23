@@ -52,8 +52,7 @@ class DaemonServer(Daemon):
 
         print("  Inicializando client Zookeeper")
         self.start_zookeeper()
-        self.zookeeper_client = KazooClient(hosts='192.168.1.102:2181,192.168.1.104:2181,192.168.1.105:2181',
-                                            read_only=True)
+        self.zookeeper_client = KazooClient(hosts=self.zookeeper_server_list, read_only=True)
         self.zookeeper_client.start()
         print("    - Cliente Zookeeper iniciado")
 
