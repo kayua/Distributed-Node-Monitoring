@@ -54,10 +54,13 @@ class Channel:
     def check_file_existence(file_path):
 
         try:
+
             with open(file_path, 'r') as f:
                 return False
+
         except FileNotFoundError as e:
             return True
+
         except IOError as e:
             return False
 
@@ -117,12 +120,12 @@ class Channel:
 
         password_msg = password + "\n"
         _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh stop')
-        time.sleep(5)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         _.write(password_msg)
         _.flush()
         command = 'sudo -S python3 monitor/daemon_server.py --stop true --id '+id_processing + ' --password '+password
         command = command + " --host "+host
         _, stdout, stderr = self.connection_ssh.exec_command(command)
-        time.sleep(5)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         _.write(password_msg)
         _.flush()
