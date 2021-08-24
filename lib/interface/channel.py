@@ -109,7 +109,7 @@ class Channel:
 
         command_daemon_server = "python3 monitor/daemon_server.py "
         command_start_server = "--start true "
-        command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
+        command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+password
         command = command + " --host "+host
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)

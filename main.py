@@ -11,6 +11,7 @@ DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
 
 
 def add_set_servers(hostname, username, password):
+
     file_servers = open(DEFAULT_SERVER_LOGS, "a+")
     new_server = hostname + ":" + username + ":" + password + "-"
     file_servers.write(new_server)
@@ -18,15 +19,18 @@ def add_set_servers(hostname, username, password):
 
 
 def get_set_servers():
+
     file_servers = open(DEFAULT_SERVER_LOGS, "r")
     list_servers = file_servers.read().split("-")
     return list_servers[:-1]
 
 
 def install_servers(hostname, user, password):
+
     channel = Channel()
 
     if channel.connect(hostname, user, password):
+
         return True
 
     channel.install_monitor()
@@ -34,19 +38,23 @@ def install_servers(hostname, user, password):
 
 
 def install_client(hostname, user, password):
+
     channel = Channel()
 
     if channel.connect(hostname, user, password):
+
         return True
 
     channel.install_monitor()
 
 
 def create_settings_servers(list_servers):
+
     zookeeper_settings_pointer = open(DEFAULT_SETTINGS, "+a")
     zookeeper_settings_pointer.write("\n")
 
     for i in range(len(list_servers)):
+
         zookeeper_server = "server." + str(i + 1) + "=" + list_servers[i] + ":2888:3888\n"
         zookeeper_settings_pointer.write(zookeeper_server)
 
@@ -54,6 +62,7 @@ def create_settings_servers(list_servers):
 
 
 def get_date_hour():
+
     return str(datetime.today())
 
 
