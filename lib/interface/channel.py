@@ -5,6 +5,10 @@ import paramiko
 from scp import SCPClient
 from paramiko import SSHClient
 
+DEFAULT_DELAY_COMMAND_SEND = 5
+DEFAULT_PATH_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/*"
+DEFAULT_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh"
+
 
 class Channel:
 
@@ -43,6 +47,7 @@ class Channel:
     def send_file(self, local_path, remote_path):
 
         with SCPClient(self.connection_ssh.get_transport()) as scp:
+
             scp.put(local_path, remote_path)
 
     @staticmethod
@@ -83,21 +88,30 @@ class Channel:
 
     def remote_start_daemon(self, id_processing, host, password):
 
-        password_msg = password + "\n"
-        _, stdout, stderr = self.connection_ssh.exec_command('sudo -S chmod +x monitor/apache-zookeeper-3.6.1/bin/*')
-        time.sleep(5)
-        _.write(password_msg)
-        _.flush()
-        _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start')
-        time.sleep(5)
-        _.write(password_msg)
-        _.flush()
-        command = 'sudo -S python3 monitor/daemon_server.py --start true --id '+id_processing + ' --password '+password
+        password_super_user = password + "\n"
+        set_permission = "sudo -S "
+        command_exec_permission = "chmod +x "
+        command = set_permission+command_exec_permission+DEFAULT_PATH_ZOOKEEPER_SERVER
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_super_user)
+        channel_stdin.flush()
+
+        command_start = " start "
+        command = set_permission+DEFAULT_ZOOKEEPER_SERVER + command_start
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_super_user)
+        channel_stdin.flush()
+
+        command_daemon_server = "python3 monitor/daemon_server.py "
+        command_start_server = "--start true "
+        command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password ' + password
         command = command + " --host "+host
-        _, stdout, stderr = self.connection_ssh.exec_command(command)
-        time.sleep(5)
-        _.write(password_msg)
-        _.flush()
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_super_user)
+        channel_stdin.flush()
 
     def remote_stop_daemon(self, id_processing, host, password):
 
