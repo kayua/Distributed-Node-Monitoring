@@ -26,6 +26,7 @@ class DaemonClient(Daemon):
         self.password_super_user = password
         self.zookeeper_client = None
         self.zookeeper_server_list = server_list
+        self.id_client = None
 
     def initialize_client_server(self):
 
@@ -33,6 +34,14 @@ class DaemonClient(Daemon):
         self.zookeeper_client = KazooClient(hosts=self.zookeeper_server_list, read_only=True)
         self.zookeeper_client.start()
         logging.info("Started Zookeeper client")
+
+    def get_client_id(self):
+
+        data, status = self.zookeeper_client.get("/number_clients")
+        self.id_client = data.encode("utf-8")+1
+        client_name = "/client"+str(self.id_client)
+        self.zookeeper_client.create(client_name, b"True")
+        self.zookeeper_client.set("/number_clients", str(self.id_client).encode("utf-8"))
 
     def get_zookeeper_signal_sync(self):
 
@@ -50,7 +59,9 @@ class DaemonClient(Daemon):
             return False
 
     def refresh_register(self):
-        pass
+
+        client_name = "/client" + str(self.id_client)
+        self.zookeeper_client.set(client_name, b"True")
 
     def background_monitor(self):
 
@@ -69,6 +80,7 @@ class DaemonClient(Daemon):
     def run(self):
 
         self.initialize_client_server()
+        self.get_client_id()
         self.background_monitor()
 
 
