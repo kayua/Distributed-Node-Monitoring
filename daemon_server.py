@@ -106,6 +106,7 @@ class DaemonServer(Daemon):
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
+            time.sleep(1)
 
     def get_zookeeper_signal_sync(self):
 
@@ -199,6 +200,7 @@ class DaemonServer(Daemon):
 
 
 def main():
+
     parser = argparse.ArgumentParser(description='Daemon Server')
 
     help_msg = "Process identification"
@@ -266,7 +268,8 @@ def main():
     if sys.argv[1] == '--start':
 
         logging.info("\t Starting daemon server")
-        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", server_list=args.hosts, password=args.password)
+        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt",
+                                     server_list=args.hosts, password=args.password)
         daemon_server.start()
 
     elif sys.argv[1] == '--stop':
