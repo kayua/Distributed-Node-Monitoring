@@ -103,9 +103,11 @@ class DaemonServer(Daemon):
             logging.info("waiting command for start")
 
             if self.zookeeper_client.exists("/server_hour"):
+                logging.info("waiting command for start")
                 time_now, _ = self.zookeeper_client.get("/server_hour")
                 self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
+
             time.sleep(1)
 
     def get_zookeeper_signal_sync(self):
@@ -141,7 +143,7 @@ class DaemonServer(Daemon):
 
         logging.info("Write database of monitoring")
         a = open("tex.txt", "+a")
-        a.write("test\n")
+        a.write(text)
         a.close()
         pass
 
@@ -195,6 +197,7 @@ class DaemonServer(Daemon):
 
     def run(self):
 
+        self.initialize_client_server()
         self.wait_setting_system()
         self.background_follower()
 

@@ -172,7 +172,7 @@ def stop_servers():
         channel.remote_stop_daemon(str(i), host_list, password_list[i])
 
     clear_metadata(host_list)
-    print("     Create registers of session")
+    print("\n")
 
 
 def init_view():
