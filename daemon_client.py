@@ -35,9 +35,11 @@ class DaemonClient(Daemon):
         self.zookeeper_client.start()
         logging.info("Started Zookeeper client")
 
-    def get_client_id(self):
+    def register_client(self):
 
+        logging.info("Registering client")
         data, status = self.zookeeper_client.get("/number_clients")
+        logging.info("Get id client")
         self.id_client = data.encode("utf-8")+1
         client_name = "/client"+str(self.id_client)
         self.zookeeper_client.create(client_name, b"True")
@@ -60,6 +62,7 @@ class DaemonClient(Daemon):
 
     def refresh_register(self):
 
+        logging.info("Refresh register")
         client_name = "/client" + str(self.id_client)
         self.zookeeper_client.set(client_name, b"True")
 
@@ -72,6 +75,7 @@ class DaemonClient(Daemon):
             logging.info("Checking signal sync")
 
             if self.get_zookeeper_signal_sync():
+
                 logging.info("Refresh register")
                 self.refresh_register()
 
@@ -80,7 +84,7 @@ class DaemonClient(Daemon):
     def run(self):
 
         self.initialize_client_server()
-        self.get_client_id()
+        self.register_client()
         self.background_monitor()
 
 
@@ -171,4 +175,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     main()
