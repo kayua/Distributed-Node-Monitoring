@@ -1,16 +1,11 @@
 import argparse
 import logging
-import os
-import subprocess
 import sys
 import time
-import psutil
-
-from datetime import datetime
 from kazoo.client import KazooClient
 from lib.daemonize.daemon import Daemon
 
-DEFAULT_TICK = 10
+DEFAULT_TICK = 5
 DEFAULT_TIMEOUT = 200
 DEFAULT_INPUT = "/dev/null"
 DEFAULT_OUTPUT = "/dev/null"
@@ -39,51 +34,6 @@ class DaemonClient(Daemon):
         self.zookeeper_client.start()
         logging.info("Started Zookeeper client")
 
-    @staticmethod
-    def zookeeper_token_leader():
-
-        logging.info("Checking token leader")
-        cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
-        status = os.popen(cmd).read()
-
-        try:
-
-            if status.index('leader'):
-
-                logging.info("Leader token detected")
-                return True
-
-            else:
-
-                logging.info("Leader token not detected")
-                return False
-
-        except:
-
-            logging.info("Leader token not detected")
-            return False
-
-    def stop_zookeeper(self):
-
-        logging.info("Stopping Zookeeper Server")
-        command = 'apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
-        os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
-        logging.info("Stopped Zookeeper Server")
-
-    def wait_setting_system(self):
-
-        while True:
-
-            logging.info("waiting command for start")
-
-            if self.zookeeper_client.exists("/server_hour"):
-                logging.info("waiting command for start")
-                time_now, _ = self.zookeeper_client.get("/server_hour")
-                self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
-                break
-
-            time.sleep(1)
-
     def get_zookeeper_signal_sync(self):
 
         logging.info("Checking signal sync")
@@ -99,89 +49,32 @@ class DaemonClient(Daemon):
             logging.info("signal sync not received")
             return False
 
-    def set_zookeeper_signal_sync(self):
-
-        logging.info("Send signal sync")
-        self.zookeeper_client.set("/signal_sync", b"True")
-        self.zookeeper_client.set("/server_hour", self.get_date_hour().encode('utf-8'))
-        time.sleep(int(DEFAULT_TICK / 2))
-        self.zookeeper_client.set("/signal_sync", b"False")
-
-    @staticmethod
-    def get_date_hour():
-
-        return str(datetime.today())
-
-    @staticmethod
-    def write_database(text):
-
-        logging.info("Write database of monitoring")
-        a = open("tex.txt", "+a")
-        a.write(text)
-        a.close()
+    def refresh_register(self):
         pass
 
-    def background_leader(self):
+    def background_monitor(self):
 
-        logging.info("State change to leader state")
-
-        while True:
-
-            if self.zookeeper_is_running():
-
-                if self.zookeeper_token_leader():
-
-                    if self.set_zookeeper_signal_sync():
-                        self.write_database("Test")
-
-                else:
-
-                    break
-
-            else:
-
-                self.start_zookeeper()
-
-            time.sleep(DEFAULT_TICK)
-
-    def background_follower(self):
-
-        self.wait_setting_system()
-        logging.info("State change to follower state")
+        logging.info("Starting monitor station")
 
         while True:
 
-            if self.zookeeper_is_running():
+            logging.info("Checking signal sync")
 
-                if self.zookeeper_token_leader():
-
-                    logging.info("State change to leader state")
-                    self.background_leader()
-
-                else:
-
-                    if self.get_zookeeper_signal_sync():
-                        self.write_database("test")
-
-            else:
-
-                self.start_zookeeper()
+            if self.get_zookeeper_signal_sync():
+                logging.info("Refresh register")
+                self.refresh_register()
 
             time.sleep(DEFAULT_TICK)
 
     def run(self):
 
         self.initialize_client_server()
-        self.wait_setting_system()
-        self.background_follower()
+        self.background_monitor()
 
 
 def main():
 
     parser = argparse.ArgumentParser(description='Daemon Server')
-
-    help_msg = "Process identification"
-    parser.add_argument("--id", "-i", help=help_msg, default="default", type=str)
 
     help_msg = "Refresh rate [2, 100]"
     parser.add_argument("--tick", "-t", help=help_msg, default=DEFAULT_TICK, type=int)
@@ -191,9 +84,6 @@ def main():
 
     help_msg = "List servers"
     parser.add_argument('--hosts', help=help_msg, default=DEFAULT_SERVER_LIST)
-
-    help_msg = "SuperUser Password"
-    parser.add_argument('--password', help=help_msg, default=DEFAULT_PASSWORD)
 
     help_msg = "Start server in background"
     parser.add_argument('--start', help=help_msg, required=False)
@@ -228,9 +118,9 @@ def main():
     logging.info("\t sleep secs    : %s" % args.tick)
     logging.info("")
 
-    pid_file = "/tmp/daemon_server%s.pid" % args.id
-    stdout = "/tmp/daemon_server%s.stdout" % args.id
-    stderr = "/tmp/daemon_daemon_%s.stderr" % args.id
+    pid_file = "/tmp/daemon_client%s.pid" % args.id
+    stdout = "/tmp/daemon_client%s.stdout" % args.id
+    stderr = "/tmp/daemon_client%s.stderr" % args.id
     stdin = open('input_daemon.txt', 'w')
     stdin.close()
 
@@ -245,21 +135,21 @@ def main():
     if sys.argv[1] == '--start':
 
         logging.info("\t Starting daemon server")
-        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt",
+        daemon_client = DaemonClient(pid_file=pid_file, stdin="input_daemon.txt",
                                      server_list=args.hosts, password=args.password)
-        daemon_server.start()
+        daemon_client.start()
 
     elif sys.argv[1] == '--stop':
 
         logging.info("\t Stop daemon server")
-        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
+        daemon_server = DaemonClient(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
         daemon_server.stop()
 
     elif sys.argv[1] == '--restart':
 
         logging.info("\t Restart daemon server")
-        daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
+        daemon_server = DaemonClient(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
                                      server_list=args.hosts, password=args.password)
         daemon_server.restart()
 
