@@ -98,3 +98,17 @@ class Channel:
         time.sleep(5)
         _.write(password_msg)
         _.flush()
+
+    def remote_stop_daemon(self, id_processing, host, password):
+
+        password_msg = password + "\n"
+        _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh stop')
+        time.sleep(5)
+        _.write(password_msg)
+        _.flush()
+        command = 'sudo -S python3 monitor/daemon_server.py --stop true --id '+id_processing + ' --password '+password
+        command = command + " --host "+host
+        _, stdout, stderr = self.connection_ssh.exec_command(command)
+        time.sleep(5)
+        _.write(password_msg)
+        _.flush()
