@@ -109,7 +109,7 @@ class Channel:
 
         command_daemon_server = "python3 monitor/daemon_server.py "
         command_start_server = "--start true "
-        command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password ' + password
+        command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
         command = command + " --host "+host
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
@@ -119,13 +119,17 @@ class Channel:
     def remote_stop_daemon(self, id_processing, host, password):
 
         password_msg = password + "\n"
-        _, stdout, stderr = self.connection_ssh.exec_command('sudo -S monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh stop')
+        set_permission = "sudo -S "
+        command_stop = " stop "
+        command_daemon_server = "python3 monitor/daemon_server.py "
+        command = set_permission + DEFAULT_ZOOKEEPER_SERVER + command_stop
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
-        _.write(password_msg)
-        _.flush()
-        command = 'sudo -S python3 monitor/daemon_server.py --stop true --id '+id_processing + ' --password '+password
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+        command = set_permission + command_daemon_server + '--stop true --id '+id_processing + ' --password '+password
         command = command + " --host "+host
-        _, stdout, stderr = self.connection_ssh.exec_command(command)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
-        _.write(password_msg)
-        _.flush()
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
