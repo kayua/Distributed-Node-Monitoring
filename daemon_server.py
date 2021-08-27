@@ -170,6 +170,24 @@ class DaemonServer(Daemon):
 
             time.sleep(DEFAULT_TICK)
 
+    def show_data_server(self):
+
+        self.wait_setting_system()
+        logging.info("\n\n Show meta data")
+        signal_sync, _ = self.zookeeper_client.get("/signal_sync")
+        signal = str(signal_sync.decode('utf-8'))
+        logging.info("Received signal: ", signal)
+        signal_hour, _ = self.zookeeper_client.get("/server_hour")
+        hour = str(signal_hour.decode('utf-8'))
+        logging.info("Hour: ", hour)
+        num_server, _ = self.zookeeper_client.get("/number_servers")
+        number_servers = str(num_server.decode('utf-8'))
+        logging.info("NumberServer:", number_servers)
+
+
+        self.zookeeper_client.set("/signal_sync", b"False")
+        logging.info("\n\n Show meta data")
+
     def background_follower(self):
 
         self.wait_setting_system()
