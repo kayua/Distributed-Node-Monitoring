@@ -34,6 +34,7 @@ class DaemonServer(Daemon):
         self.zookeeper_client = None
         self.zookeeper_server_list = server_list
         self.file_results = None
+        self.server_id = pid_file
 
     @staticmethod
     def zookeeper_is_running():
@@ -136,6 +137,12 @@ class DaemonServer(Daemon):
         self.zookeeper_client.set("/server_hour", self.get_date_hour().encode('utf-8'))
         time.sleep(int(DEFAULT_TICK / 2))
         self.zookeeper_client.set("/signal_sync", b"False")
+
+    def refresh_state_server(self):
+
+        logging.info("Refresh state local server")
+        server_name = "/server" + str(self.server_id)
+        self.zookeeper_client.set(server_name, b"True")
 
     @staticmethod
     def get_date_hour():
@@ -261,7 +268,6 @@ class DaemonServer(Daemon):
             self.zookeeper_client.set(client_name, b"False")
 
     def background_follower(self):
-
 
         self.wait_setting_system()
         logging.info("State change to follower state")
