@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 import psutil
+import csv
 
 from datetime import datetime
 from kazoo.client import KazooClient
@@ -15,6 +16,7 @@ DEFAULT_TIMEOUT = 200
 DEFAULT_INPUT = "/dev/null"
 DEFAULT_OUTPUT = "/dev/null"
 DEFAULT_ERR = "/dev/null"
+DEFAULT_FILE_OUTPUT = "database.csv"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
 TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
@@ -31,6 +33,7 @@ class DaemonServer(Daemon):
         self.password_super_user = password
         self.zookeeper_client = None
         self.zookeeper_server_list = server_list
+        self.file_results = None
 
     @staticmethod
     def zookeeper_is_running():
@@ -138,39 +141,34 @@ class DaemonServer(Daemon):
 
         return str(datetime.today())
 
+    def create_database_file(self, datetime_now):
+
+        logging.info("Creating data file")
+
+        with open(DEFAULT_FILE_OUTPUT, 'w', newline='') as csv_file:
+
+            self.file_results = csv.writer(csv_file, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+        self.file_results.writerow(['Start monitor: ', 'Hour:' + datetime_now])
+
     @staticmethod
-    def write_database(text):
+    def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
-        a = open("tex.txt", "+a")
-        a.write(text)
-        a.close()
+        self.file_results.writerow(['Snapshot Monitor: ', 'Hour:'+datetime_now])
+        self.file_results.writerow(['Servers: '])
+
+        for i in list_servers:
+
+            self.file_results.writerow(['-', str(i)])
+
+        self.file_results.writerow(['Clients: '])
+
+        for i in list_clients:
+            self.file_results.writerow(['-', str(i)])
+
+        self.file_results.writerow([''])
         pass
-
-    def background_leader(self):
-
-        logging.info("State change to leader state")
-
-        while True:
-
-            if self.zookeeper_is_running():
-
-                if self.zookeeper_token_leader():
-
-                    self.show_data_server()
-
-                    if self.set_zookeeper_signal_sync():
-                        self.write_database("Test")
-
-                else:
-
-                    break
-
-            else:
-
-                self.start_zookeeper()
-
-            time.sleep(DEFAULT_TICK)
 
     def show_data_server(self):
 
@@ -213,6 +211,31 @@ class DaemonServer(Daemon):
             list_registered_clients.append(str(client_id.decode('utf-8')))
 
         return datetime_now, list_registered_servers, list_registered_clients
+
+    def background_leader(self):
+
+        logging.info("State change to leader state")
+
+        while True:
+
+            if self.zookeeper_is_running():
+
+                if self.zookeeper_token_leader():
+
+                    self.show_data_server()
+
+                    if self.set_zookeeper_signal_sync():
+                        self.write_database("Test")
+
+                else:
+
+                    break
+
+            else:
+
+                self.start_zookeeper()
+
+            time.sleep(DEFAULT_TICK)
 
     def background_follower(self):
 
