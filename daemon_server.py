@@ -224,10 +224,11 @@ class DaemonServer(Daemon):
 
                 if self.zookeeper_token_leader():
 
-                    datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
+                    self.clear_state_monitor()
 
                     if self.set_zookeeper_signal_sync():
 
+                        datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
                         self.write_database(datetime_now, list_registered_servers, list_registered_clients)
 
                 else:
@@ -240,7 +241,27 @@ class DaemonServer(Daemon):
 
             time.sleep(DEFAULT_TICK)
 
+    def clear_state_monitor(self):
+
+        logging.info("Clean state buffer")
+
+        num_server, _ = self.zookeeper_client.get("/number_servers")
+        number_servers = str(num_server.decode('utf-8'))
+        num_clients, _ = self.zookeeper_client.get("/number_clients")
+        number_clients = str(num_clients.decode('utf-8'))
+
+        for i in range(int(number_servers)):
+
+            server_name = "/server" + str(i)
+            self.zookeeper_client.set(server_name, b"False")
+
+        for i in range(int(number_clients)):
+
+            client_name = "/client" + str(i)
+            self.zookeeper_client.set(client_name, b"False")
+
     def background_follower(self):
+
 
         self.wait_setting_system()
         logging.info("State change to follower state")
@@ -262,7 +283,6 @@ class DaemonServer(Daemon):
 
                         datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
                         self.write_database(datetime_now, list_registered_servers, list_registered_clients)
-
 
             else:
 
