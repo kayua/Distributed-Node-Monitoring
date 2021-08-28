@@ -108,10 +108,11 @@ class DaemonServer(Daemon):
             if self.zookeeper_client.exists("/server_hour"):
                 logging.info("waiting command for start")
                 time_now, _ = self.zookeeper_client.get("/server_hour")
-                self.write_database("Monitoring started at:" + time_now.decode('utf-8'))
                 break
 
             time.sleep(1)
+
+        self.create_database_file(time_now)
 
     def get_zookeeper_signal_sync(self):
 
@@ -151,7 +152,6 @@ class DaemonServer(Daemon):
 
         self.file_results.writerow(['Start monitor: ', 'Hour:' + datetime_now])
 
-    @staticmethod
     def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
@@ -170,7 +170,7 @@ class DaemonServer(Daemon):
         self.file_results.writerow([''])
         pass
 
-    def show_data_server(self):
+    def get_state_monitor(self):
 
         list_registered_servers = []
         list_registered_clients = []
@@ -222,10 +222,10 @@ class DaemonServer(Daemon):
 
                 if self.zookeeper_token_leader():
 
-                    self.show_data_server()
+                    datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
 
                     if self.set_zookeeper_signal_sync():
-                        self.write_database("Test")
+                        self.write_database(datetime_now, list_registered_servers, list_registered_clients)
 
                 else:
 
@@ -248,7 +248,7 @@ class DaemonServer(Daemon):
 
                 if self.zookeeper_token_leader():
 
-                    self.show_data_server()
+                    self.get_state_monitor()
 
                     logging.info("State change to leader state")
                     self.background_leader()
