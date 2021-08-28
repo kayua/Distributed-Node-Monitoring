@@ -61,7 +61,7 @@ class DaemonServer(Daemon):
         logging.info("Starting Zookeeper Server")
         command = 'chmod +x apache-zookeeper-3.6.1/bin/./*'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
-        cmd = "apache-zookeeper-3.6.1/bin/./zkServer.sh start"
+        cmd = "monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start"
         subprocess.call(cmd, shell=True)
         logging.info("Started Zookeeper Server")
 
@@ -69,7 +69,7 @@ class DaemonServer(Daemon):
     def zookeeper_token_leader():
 
         logging.info("Checking token leader")
-        cmd = 'apache-zookeeper-3.6.1/bin/./zkServer.sh status'
+        cmd = 'monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh status'
         status = os.popen(cmd).read()
 
         try:
@@ -92,7 +92,7 @@ class DaemonServer(Daemon):
     def stop_zookeeper(self):
 
         logging.info("Stopping Zookeeper Server")
-        command = 'apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
+        command = 'monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
         logging.info("Stopped Zookeeper Server")
 
@@ -188,7 +188,7 @@ class DaemonServer(Daemon):
         number_servers = str(num_server.decode('utf-8'))
         logging.info("NumberServers:" + number_servers)
 
-        num_clients, _ = self.zookeeper_client.get("/number_servers")
+        num_clients, _ = self.zookeeper_client.get("/number_clients")
         number_clients = str(num_clients.decode('utf-8'))
         logging.info("NumberClients: " + number_clients)
         logging.info("\nServerList:")

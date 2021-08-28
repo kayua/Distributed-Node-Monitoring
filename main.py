@@ -1,4 +1,5 @@
 import sys
+import time
 from datetime import datetime
 from kazoo.client import KazooClient
 from lib.interface.channel import Channel
@@ -149,10 +150,19 @@ def start_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Starting")
+        print("         - " + hostname_list[i] + " Starting Zookeeper server")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file(DEFAULT_SETTINGS, DEFAULT_ZOOKEEPER_SETTINGS)
-        channel.remote_start_daemon(str(i), host_list, password_list[i])
+        channel.remote_start_zookeeper(str(i+1), host_list, password_list[i])
+
+    time.sleep(20)
+
+    for i in range(len(hostname_list)):
+
+        channel = Channel()
+        print("         - " + hostname_list[i] + " Starting monitor")
+        channel.connect(hostname_list[i], username_list[i], password_list[i])
+        channel.remote_start_monitors(str(i+1), host_list, password_list[i])
 
     register_metadata(host_list, str(len(hostname_list)))
     print("\n")
@@ -185,6 +195,7 @@ def stop_servers():
 
 
 def init_view():
+
     print("")
     view = View()
     view.print_view()
