@@ -157,6 +157,8 @@ class DaemonServer(Daemon):
 
                 if self.zookeeper_token_leader():
 
+                    self.show_data_server()
+
                     if self.set_zookeeper_signal_sync():
                         self.write_database("Test")
 
@@ -172,21 +174,38 @@ class DaemonServer(Daemon):
 
     def show_data_server(self):
 
-        self.wait_setting_system()
         logging.info("\n\n Show meta data")
+
         signal_sync, _ = self.zookeeper_client.get("/signal_sync")
         signal = str(signal_sync.decode('utf-8'))
-        logging.info("Received signal: ", signal)
+        logging.info("Received signal: " + signal)
+
         signal_hour, _ = self.zookeeper_client.get("/server_hour")
         hour = str(signal_hour.decode('utf-8'))
-        logging.info("Hour: ", hour)
+        logging.info("Hour: " + hour)
+
         num_server, _ = self.zookeeper_client.get("/number_servers")
         number_servers = str(num_server.decode('utf-8'))
-        logging.info("NumberServer:", number_servers)
+        logging.info("NumberServers:" + number_servers)
 
+        num_clients, _ = self.zookeeper_client.get("/number_servers")
+        number_clients = str(num_clients.decode('utf-8'))
+        logging.info("NumberClients: " + number_clients)
+        logging.info("\nServerList:")
 
-        self.zookeeper_client.set("/signal_sync", b"False")
-        logging.info("\n\n Show meta data")
+        for i in range(int(number_servers)):
+
+            server_name = "/server" + str(i)
+            num_clients, _ = self.zookeeper_client.get(server_name)
+            logging.info(server_name+": " + str(num_clients.decode('utf-8')))
+
+        logging.info("\nClientList:")
+
+        for i in range(int(number_clients)):
+
+            client_name = "/client" + str(i)
+            num_clients, _ = self.zookeeper_client.get(client_name)
+            logging.info(client_name + ": ", str(num_clients.decode('utf-8')))
 
     def background_follower(self):
 
@@ -198,6 +217,8 @@ class DaemonServer(Daemon):
             if self.zookeeper_is_running():
 
                 if self.zookeeper_token_leader():
+
+                    self.show_data_server()
 
                     logging.info("State change to leader state")
                     self.background_leader()

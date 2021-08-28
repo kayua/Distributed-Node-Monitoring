@@ -25,7 +25,6 @@ class Channel:
         try:
 
             self.connection_ssh.connect(hostname=hostname, username=user, password=password)
-
             return 0
 
         except:
