@@ -113,7 +113,7 @@ class DaemonServer(Daemon):
 
             time.sleep(1)
 
-        self.create_database_file(time_now)
+        self.create_database_file(time_now.decode("utf-8"))
 
     def get_zookeeper_signal_sync(self):
 
@@ -153,30 +153,27 @@ class DaemonServer(Daemon):
 
         logging.info("Creating data file")
 
-        with open(DEFAULT_FILE_OUTPUT, 'w', newline='') as csv_file:
-
-            self.file_results = csv.writer(csv_file, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
-        self.file_results.writerow(['Start monitor: ', 'Hour:' + datetime_now])
+        self.file_results = open(DEFAULT_FILE_OUTPUT, 'w')
+        self.file_results.write('Start monitor: Hour:' + datetime_now)
 
     def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
 
-        self.file_results.writerow(['Snapshot Monitor: ', 'Hour:'+datetime_now])
-        self.file_results.writerow(['Servers: '])
+        self.file_results.write('Snapshot Monitor: Hour:'+datetime_now+'\n')
+        self.file_results.write('  Servers: \n')
 
         for i in list_servers:
 
-            self.file_results.writerow(['-', str(i)])
+            self.file_results.write('    -'+str(i)+'\n')
 
-        self.file_results.writerow(['Clients: '])
+        self.file_results.write('  Clients: \n')
 
         for i in list_clients:
 
-            self.file_results.writerow(['-', str(i)])
+            self.file_results.write('    -'+str(i))
 
-        self.file_results.writerow([''])
+        self.file_results.write('\n')
         pass
 
     def get_state_monitor(self):
