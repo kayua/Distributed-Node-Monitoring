@@ -212,7 +212,7 @@ class DaemonServer(Daemon):
             logging.info(client_name + ": ", str(client_id.decode('utf-8')))
             list_registered_clients.append(str(client_id.decode('utf-8')))
 
-
+        return datetime_now, list_registered_servers, list_registered_clients
 
     def background_follower(self):
 
