@@ -5,7 +5,7 @@ import paramiko
 from scp import SCPClient
 from paramiko import SSHClient
 
-DEFAULT_DELAY_COMMAND_SEND = 5
+DEFAULT_DELAY_COMMAND_SEND = 1
 DEFAULT_PATH_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/*"
 DEFAULT_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh"
 
@@ -95,10 +95,12 @@ class Channel:
         command_exec_permission = "chmod +x "
         command = set_permission+command_exec_permission+DEFAULT_PATH_ZOOKEEPER_SERVER
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_super_user)
         channel_stdin.flush()
-
+        print(command)
+        print(str(channel_stdout.read())+" : "+str(channel_stderr.read()))
         command_start = " start "
         command = set_permission+DEFAULT_ZOOKEEPER_SERVER + command_start
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
