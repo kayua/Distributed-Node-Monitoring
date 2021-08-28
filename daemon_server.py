@@ -155,6 +155,7 @@ class DaemonServer(Daemon):
     def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
+
         self.file_results.writerow(['Snapshot Monitor: ', 'Hour:'+datetime_now])
         self.file_results.writerow(['Servers: '])
 
@@ -165,6 +166,7 @@ class DaemonServer(Daemon):
         self.file_results.writerow(['Clients: '])
 
         for i in list_clients:
+
             self.file_results.writerow(['-', str(i)])
 
         self.file_results.writerow([''])
@@ -225,6 +227,7 @@ class DaemonServer(Daemon):
                     datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
 
                     if self.set_zookeeper_signal_sync():
+
                         self.write_database(datetime_now, list_registered_servers, list_registered_clients)
 
                 else:
@@ -256,7 +259,10 @@ class DaemonServer(Daemon):
                 else:
 
                     if self.get_zookeeper_signal_sync():
-                        self.write_database("test")
+
+                        datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
+                        self.write_database(datetime_now, list_registered_servers, list_registered_clients)
+
 
             else:
 
