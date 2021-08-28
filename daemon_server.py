@@ -174,6 +174,9 @@ class DaemonServer(Daemon):
 
     def show_data_server(self):
 
+        list_registered_servers = []
+        list_registered_clients = []
+
         logging.info("\n\n Show meta data")
 
         signal_sync, _ = self.zookeeper_client.get("/signal_sync")
@@ -181,31 +184,35 @@ class DaemonServer(Daemon):
         logging.info("Received signal: " + signal)
 
         signal_hour, _ = self.zookeeper_client.get("/server_hour")
-        hour = str(signal_hour.decode('utf-8'))
-        logging.info("Hour: " + hour)
+        datetime_now = str(signal_hour.decode('utf-8'))
+        logging.info("Hour: " + datetime_now)
 
         num_server, _ = self.zookeeper_client.get("/number_servers")
         number_servers = str(num_server.decode('utf-8'))
         logging.info("NumberServers:" + number_servers)
 
-        num_clients, _ = self.zookeeper_client.get("/number_clients")
-        number_clients = str(num_clients.decode('utf-8'))
+        client_id, _ = self.zookeeper_client.get("/number_clients")
+        number_clients = str(client_id.decode('utf-8'))
         logging.info("NumberClients: " + number_clients)
         logging.info("\nServerList:")
 
         for i in range(int(number_servers)):
 
             server_name = "/server" + str(i)
-            num_clients, _ = self.zookeeper_client.get(server_name)
-            logging.info(server_name+": " + str(num_clients.decode('utf-8')))
+            server_id, _ = self.zookeeper_client.get(server_name)
+            logging.info(server_name+": " + str(server_id.decode('utf-8')))
+            list_registered_servers.append(str(server_id.decode('utf-8')))
 
         logging.info("\nClientList:")
 
         for i in range(int(number_clients)):
 
             client_name = "/client" + str(i)
-            num_clients, _ = self.zookeeper_client.get(client_name)
-            logging.info(client_name + ": ", str(num_clients.decode('utf-8')))
+            client_id, _ = self.zookeeper_client.get(client_name)
+            logging.info(client_name + ": ", str(client_id.decode('utf-8')))
+            list_registered_clients.append(str(client_id.decode('utf-8')))
+
+
 
     def background_follower(self):
 
