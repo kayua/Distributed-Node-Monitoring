@@ -18,8 +18,14 @@ DEFAULT_ERR = "/dev/null"
 DEFAULT_FILE_OUTPUT = "database.csv"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
-TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
+
+DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
+DEFAULT_PATH_NUM_SERVERS = "/number_servers"
+DEFAULT_SIGNAL_SYNC = "/signal_sync"
+DEFAULT_SIGNAL_HOUR = "/server_hour"
 DEFAULT_CODIFICATION_FILE = "utf-8"
+
+TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 LOG_LEVEL = logging.DEBUG
 
 
@@ -118,7 +124,7 @@ class DaemonServer(Daemon):
     def get_zookeeper_signal_sync(self):
 
         logging.info("Checking signal sync")
-        signal_sync, _ = self.zookeeper_client.get("/signal_sync")
+        signal_sync, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_SYNC)
 
         if signal_sync == b'True':
 
@@ -133,10 +139,10 @@ class DaemonServer(Daemon):
     def set_zookeeper_signal_sync(self):
 
         logging.info("Send signal sync")
-        self.zookeeper_client.set("/signal_sync", b"True")
+        self.zookeeper_client.set(DEFAULT_SIGNAL_SYNC, b"True")
         self.zookeeper_client.set("/server_hour", self.get_date_hour().encode(DEFAULT_CODIFICATION_FILE))
         time.sleep(int(DEFAULT_TICK / 2))
-        self.zookeeper_client.set("/signal_sync", b"False")
+        self.zookeeper_client.set(DEFAULT_SIGNAL_SYNC, b"False")
 
     def refresh_state_server(self):
 
@@ -187,7 +193,7 @@ class DaemonServer(Daemon):
 
         logging.info("\n\n Show meta data")
 
-        signal_sync, _ = self.zookeeper_client.get("/signal_sync")
+        signal_sync, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_SYNC)
         signal = str(signal_sync.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("Received signal: " + signal)
 
@@ -195,11 +201,10 @@ class DaemonServer(Daemon):
         datetime_now = str(signal_hour.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("Hour: " + datetime_now)
 
-        num_server, _ = self.zookeeper_client.get("/number_servers")
+        num_server, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
         number_servers = str(num_server.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("NumberServers:" + number_servers)
-
-        client_id, _ = self.zookeeper_client.get("/number_clients")
+        client_id, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
         number_clients = str(client_id.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("NumberClients: " + number_clients)
         logging.info("\nServerList:")
@@ -253,9 +258,9 @@ class DaemonServer(Daemon):
 
         logging.info("Clean state buffer")
 
-        num_server, _ = self.zookeeper_client.get("/number_servers")
+        num_server, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
         number_servers = str(num_server.decode(DEFAULT_CODIFICATION_FILE))
-        num_clients, _ = self.zookeeper_client.get("/number_clients")
+        num_clients, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
         number_clients = str(num_clients.decode(DEFAULT_CODIFICATION_FILE))
 
         for i in range(int(number_servers)):
