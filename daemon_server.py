@@ -201,7 +201,7 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_servers)):
 
-            server_name = "/server" + str(i)
+            server_name = "/server" + str(i+1)
             server_id, _ = self.zookeeper_client.get(server_name)
             logging.info(server_name+": " + str(server_id.decode('utf-8')))
             list_registered_servers.append(str(server_id.decode('utf-8')))
@@ -210,7 +210,7 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_clients)):
 
-            client_name = "/client" + str(i)
+            client_name = "/client" + str(i+1)
             client_id, _ = self.zookeeper_client.get(client_name)
             logging.info(client_name + ": ", str(client_id.decode('utf-8')))
             list_registered_clients.append(str(client_id.decode('utf-8')))
@@ -257,12 +257,12 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_servers)):
 
-            server_name = "/server" + str(i)
+            server_name = "/server" + str(i+1)
             self.zookeeper_client.set(server_name, b"False")
 
         for i in range(int(number_clients)):
 
-            client_name = "/client" + str(i)
+            client_name = "/client" + str(i+1)
             self.zookeeper_client.set(client_name, b"False")
 
     def background_follower(self):

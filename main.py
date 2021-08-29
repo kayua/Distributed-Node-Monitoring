@@ -88,7 +88,7 @@ def register_metadata(hosts, num_servers):
 
     for i in range(int(num_servers)):
 
-        server_name = "/server" + str(i)
+        server_name = "/server" + str(i+1)
 
         if not zookeeper_client.exists(server_name):
 

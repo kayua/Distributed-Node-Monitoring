@@ -55,7 +55,7 @@ class Daemon(object):
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
-        atexit.register(self.del_pid)
+        atexit.register(self.remove_process_id)
         pid = str(os.getpid())
 
         try:
@@ -66,11 +66,11 @@ class Daemon(object):
 
             sys.exit(1)
 
-    def del_pid(self):
+    def remove_process_id(self):
 
         os.remove(self.pid_file)
 
-    def get_pid(self):
+    def get_process_id(self):
 
         try:
 
@@ -86,7 +86,7 @@ class Daemon(object):
 
     def start(self, daemon=True):
 
-        if self.get_pid():
+        if self.get_process_id():
 
             message = "pid file %s already exist. Daemon already running?\n"
             sys.stderr.write(message % self.pid_file)
@@ -99,7 +99,7 @@ class Daemon(object):
 
     def stop(self):
 
-        pid = self.get_pid()
+        pid = self.get_process_id()
 
         if not pid:
 
@@ -127,9 +127,9 @@ class Daemon(object):
 
                 sys.exit(1)
 
-    def signal(self):
+    def signal_process(self):
 
-        pid = self.get_pid()
+        pid = self.get_process_id()
 
         if pid:
 
