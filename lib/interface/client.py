@@ -39,7 +39,3 @@ class Client:
 
                 status_nodes = self.communication.ge
 
-
-
-
-

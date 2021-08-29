@@ -28,5 +28,5 @@ def print_help():
     print(" Monitor:\n")
     print("     - AllState")
     print("     - ClientState       hostname userName password")
-    print("     - MonitoSettings    \n\n")
+    print("     - MonitorSettings    \n\n")
     print("")

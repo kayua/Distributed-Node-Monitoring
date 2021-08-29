@@ -10,6 +10,10 @@ DEFAULT_TIMEOUT = 200
 DEFAULT_INPUT = "/dev/null"
 DEFAULT_OUTPUT = "/dev/null"
 DEFAULT_ERR = "/dev/null"
+DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
+DEFAULT_SIGNAL_SYNC = "/signal_sync"
+DEFAULT_SIGNAL_HOUR = "/server_hour"
+DEFAULT_CODIFICATION_FILE = "utf-8"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
 TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
@@ -38,18 +42,18 @@ class DaemonClient(Daemon):
     def register_client(self):
 
         logging.info("Registering client")
-        data, status = self.zookeeper_client.get("/number_clients")
+        data, status = self.zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
         logging.info("Get id client")
-        self.id_client = data.encode("utf-8")+1
-        logging.info("Client ID: "+self.id_client)
-        client_name = "/client"+str(self.id_client)
+        self.id_client = int(data.decode(DEFAULT_CODIFICATION_FILE))+1
+        logging.info("Client ID: {}".format(str(self.id_client)))
+        client_name = "/client{}".format(str(self.id_client))
         self.zookeeper_client.create(client_name, b"True")
-        self.zookeeper_client.set("/number_clients", str(self.id_client).encode("utf-8"))
+        self.zookeeper_client.set(DEFAULT_PATH_NUM_CLIENTS, str(self.id_client).encode(DEFAULT_CODIFICATION_FILE))
 
     def get_zookeeper_signal_sync(self):
 
         logging.info("Checking signal sync")
-        signal_sync, _ = self.zookeeper_client.get("/signal_sync")
+        signal_sync, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_SYNC)
 
         if signal_sync == b'True':
 
@@ -64,7 +68,7 @@ class DaemonClient(Daemon):
     def refresh_register(self):
 
         logging.info("Refresh register")
-        client_name = "/client" + str(self.id_client-1)
+        client_name = "/client{}".format(str(self.id_client-1))
         logging.info(client_name)
         self.zookeeper_client.set(client_name, b"True")
 
@@ -111,6 +115,9 @@ def main():
     parser.add_argument('--id', help=help_msg,default=0)
     help_msg = "Stop server in background"
     parser.add_argument('--stop', help=help_msg, required=False)
+
+    help_msg = "SuperUser Password"
+    parser.add_argument('--password', help=help_msg, default=DEFAULT_PASSWORD)
 
     help_msg = "Restart server"
     parser.add_argument('--restart', help=help_msg, required=False)
