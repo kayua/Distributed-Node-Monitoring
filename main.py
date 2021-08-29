@@ -93,7 +93,7 @@ def register_metadata(hosts, num_servers):
 
     for i in range(int(num_servers)):
 
-        server_name = "/server" + str(i+1)
+        server_name = "/server{}".format(str(i+1))
 
         if not zookeeper_client.exists(server_name):
 
@@ -120,14 +120,14 @@ def clear_metadata(hosts):
 
     for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
-        client_name = "/client" + str(i)
+        client_name = "/client{}".format(str(i))
         zookeeper_client.delete(client_name, recursive=True)
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
     for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
-        server_name = "/server" + str(i)
+        server_name = "/server{}".format(str(i))
         zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
@@ -192,7 +192,7 @@ def stop_servers():
         channel = Channel()
         print("         - {} Stopping monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
-        channel.remove_stop_daemon(str(i), host_list, password_list[i])
+        channel.remove_stop_daemon(str(i+1), host_list, password_list[i])
 
     clear_metadata(host_list)
     print("\n")
@@ -216,6 +216,7 @@ def remove_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
+
         print("         - {} Stopping monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remove_stop_daemon(str(i), host_list, password_list[i])

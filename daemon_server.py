@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 import psutil
+
 from datetime import datetime
 from kazoo.client import KazooClient
 from lib.daemonize.daemon import Daemon
@@ -81,8 +82,9 @@ class DaemonServer(Daemon):
     def zookeeper_token_leader():
 
         logging.info("Checking token leader")
-        cmd = 'monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh status'
-        status = os.popen(cmd).read()
+        command_state = "status"
+        command = '{}./zkServer.sh {}'.format(DEFAULT_ZOOKEEPER_PATH, command_state)
+        status = os.popen(command).read()
 
         try:
 
@@ -101,11 +103,13 @@ class DaemonServer(Daemon):
             logging.info("Leader token not detected")
             return False
 
-    def stop_zookeeper(self):
+    @staticmethod
+    def stop_zookeeper():
 
         logging.info("Stopping Zookeeper Server")
-        command = 'monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh stop'
-        os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
+        command_stop = 'stop'
+        command = '{}./zkServer.sh {}'.format(DEFAULT_ZOOKEEPER_PATH, command_stop)
+        subprocess.call(command, shell=True)
         logging.info("Stopped Zookeeper Server")
 
     def wait_setting_system(self):
@@ -115,6 +119,7 @@ class DaemonServer(Daemon):
             logging.info("waiting command for start")
 
             if self.zookeeper_client.exists(DEFAULT_SIGNAL_HOUR):
+
                 logging.info("waiting command for start")
                 time_now, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_HOUR)
                 break
