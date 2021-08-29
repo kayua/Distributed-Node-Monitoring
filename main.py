@@ -154,7 +154,7 @@ def start_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Starting Zookeeper server")
+        print("         - {} Starting Zookeeper server".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file(DEFAULT_SETTINGS, DEFAULT_ZOOKEEPER_SETTINGS)
         channel.remote_start_zookeeper(str(i+1), host_list, password_list[i])
@@ -164,7 +164,7 @@ def start_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Starting monitor")
+        print("         - {} Starting monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remote_start_monitors(str(i+1), host_list, password_list[i])
 
@@ -190,7 +190,7 @@ def stop_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Stopping")
+        print("         - {} Stopping monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remove_stop_daemon(str(i), host_list, password_list[i])
 
