@@ -5,7 +5,6 @@ import subprocess
 import sys
 import time
 import psutil
-
 from datetime import datetime
 from kazoo.client import KazooClient
 from lib.daemonize.daemon import Daemon
@@ -16,6 +15,7 @@ DEFAULT_INPUT = "/dev/null"
 DEFAULT_OUTPUT = "/dev/null"
 DEFAULT_ERR = "/dev/null"
 DEFAULT_FILE_OUTPUT = "database.csv"
+DEFAULT_ZOOKEEPER_PATH = "monitor/apache-zookeeper-3.6.1/bin/"
 DEFAULT_SERVER_LIST = ""
 DEFAULT_PASSWORD = ""
 
@@ -68,11 +68,13 @@ class DaemonServer(Daemon):
 
     def start_zookeeper(self):
 
-        logging.info("Starting Zookeeper Server")
-        command = 'chmod +x apache-zookeeper-3.6.1/bin/./*'
+        logging.info('Starting Zookeeper Server')
+        command_permission = 'chmod +x'
+        command_start = 'start'
+        command = "{} {}*".format(command_permission, DEFAULT_ZOOKEEPER_PATH)
         os.system('echo %s|sudo -S %s' % (self.password_super_user, command))
-        cmd = "monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh start"
-        subprocess.call(cmd, shell=True)
+        command = '{}./zkServer.sh {}'.format(DEFAULT_ZOOKEEPER_PATH, command_start)
+        subprocess.call(command, shell=True)
         logging.info("Started Zookeeper Server")
 
     @staticmethod
