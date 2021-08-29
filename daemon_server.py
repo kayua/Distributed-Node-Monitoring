@@ -112,9 +112,9 @@ class DaemonServer(Daemon):
 
             logging.info("waiting command for start")
 
-            if self.zookeeper_client.exists("/server_hour"):
+            if self.zookeeper_client.exists(DEFAULT_SIGNAL_HOUR):
                 logging.info("waiting command for start")
-                time_now, _ = self.zookeeper_client.get("/server_hour")
+                time_now, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_HOUR)
                 break
 
             time.sleep(1)
@@ -140,7 +140,7 @@ class DaemonServer(Daemon):
 
         logging.info("Send signal sync")
         self.zookeeper_client.set(DEFAULT_SIGNAL_SYNC, b"True")
-        self.zookeeper_client.set("/server_hour", self.get_date_hour().encode(DEFAULT_CODIFICATION_FILE))
+        self.zookeeper_client.set(DEFAULT_SIGNAL_HOUR, self.get_date_hour().encode(DEFAULT_CODIFICATION_FILE))
         time.sleep(int(DEFAULT_TICK / 2))
         self.zookeeper_client.set(DEFAULT_SIGNAL_SYNC, b"False")
 
@@ -197,7 +197,7 @@ class DaemonServer(Daemon):
         signal = str(signal_sync.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("Received signal: " + signal)
 
-        signal_hour, _ = self.zookeeper_client.get("/server_hour")
+        signal_hour, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_HOUR)
         datetime_now = str(signal_hour.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("Hour: " + datetime_now)
 
