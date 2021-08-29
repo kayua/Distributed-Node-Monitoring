@@ -7,6 +7,7 @@ from lib.interface.view import View
 from lib.interface.view import print_help
 
 DEFAULT_SERVER_LOGS = "servers/server_list.log"
+DEFAULT_CLIENTS_LOGS = "servers/client_list.log"
 DEFAULT_SETTINGS = "settings/config.txt"
 DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
 DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
@@ -14,6 +15,7 @@ DEFAULT_PATH_NUM_SERVERS = "/number_servers"
 DEFAULT_SIGNAL_SYNC = "/signal_sync"
 DEFAULT_SIGNAL_HOUR = "/server_hour"
 DEFAULT_CODIFICATION_FILE = "utf-8"
+DEFAULT_NUMBER_CLIENTS = 0
 
 
 def add_set_servers(hostname, username, password):
@@ -22,6 +24,14 @@ def add_set_servers(hostname, username, password):
     new_server = "{}:{}:{}-".format(hostname, username, password)
     file_servers.write(new_server)
     file_servers.close()
+
+
+def add_set_client(hostname, username, password):
+
+    file_clients = open(DEFAULT_CLIENTS_LOGS, "a+")
+    new_client = "{}:{}:{}-".format(hostname, username, password)
+    file_clients.write(new_client)
+    file_clients.close()
 
 
 def get_set_servers():
@@ -51,7 +61,7 @@ def install_client(hostname, user, password):
 
         return True
 
-    channel.install_monitor()
+    channel.install_client()
 
 
 def create_settings_servers(list_servers):
@@ -198,6 +208,23 @@ def stop_servers():
     print("\n")
 
 
+def start_client(host, username, password):
+
+    saved_nodes = get_set_servers()
+    hostname_list = []
+
+    for i in saved_nodes:
+
+        hostname_list.append(i.split(":")[0])
+
+    host_list = ":2181,".join(hostname_list) + ":2181"
+    channel = Channel()
+    print("         - {} Starting client".format(host))
+    channel.connect(host, username, password)
+    channel.remove_start_client(1, host_list, password)
+    print("\n")
+
+
 def remove_servers():
 
     saved_nodes = get_set_servers()
@@ -263,6 +290,11 @@ def choice_command(commands):
         if install_client(commands[-3], commands[-2], commands[-1]):
             print("\n     Installation Error\n")
 
+        else:
+
+            print("\n     Successfully Installation\n")
+            add_set_client(commands[-3], commands[-2], commands[-1])
+
     elif commands[0] == "ServerStart":
 
         print("\n     Starting Servers: \n")
@@ -277,6 +309,11 @@ def choice_command(commands):
 
         print("\n     Stopping Servers: \n")
         remove_servers()
+
+    elif commands[0] == "ClientAdd":
+
+        print("\n     Starting Client: \n")
+        start_client(commands[-3], commands[-2], commands[-1])
 
     elif commands[0] == "exit":
 

@@ -10,6 +10,8 @@ DEFAULT_PATH_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/*"
 DEFAULT_ZOOKEEPER_SERVER = "monitor/apache-zookeeper-3.6.1/bin/./zkServer.sh"
 DEFAULT_ZOOKEEPER_ID = "monitor/server_id/myid"
 DEFAULT_DAEMON_MONITOR = "monitor/daemon_server.py"
+DEFAULT_FILE_DATABASE = "database.csv"
+DEFAULT_FILE_LOG = 'logfile.log'
 
 
 class Channel:
@@ -90,6 +92,12 @@ class Channel:
         self.send_file(DEFAULT_TAR_FILE, DEFAULT_TAR_FILE)
         self.decompress_file()
 
+    def install_client(self):
+
+        self.compress_file()
+        self.send_file(DEFAULT_TAR_FILE, DEFAULT_TAR_FILE)
+        self.decompress_file()
+
     def remote_start_zookeeper(self, id_processing, host, password):
 
         password_super_user = password + "\n"
@@ -124,7 +132,7 @@ class Channel:
 
         set_permission = "sudo -S"
         password_super_user = password + "\n"
-        command_daemon_server = "python3 monitor/daemon_server.py "
+        command_daemon_server = "python3 {}".format(DEFAULT_DAEMON_MONITOR)
         command_start_server = "--stop true "
         command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
         command = command + " --host "+host
@@ -145,36 +153,79 @@ class Channel:
 
         password_msg = password + "\n"
         set_permission = "sudo -S "
-        command = set_permission + "pkill python3"
+        command_remove = "rm -r"
+        command = "{} pkill python3".format(set_permission)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
 
-        command = set_permission + "pkill java"
+        command = "{} pkill java".format(set_permission)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
 
-        command = set_permission + "rm -r monitor"
+        command = "{} {} monitor".format(set_permission, command_remove)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
 
-        command = set_permission + "rm -r monitor.tar.gz"
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_TAR_FILE)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
 
-        command = set_permission + "rm -r database.csv"
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_FILE_DATABASE)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
-        command = set_permission + "rm -r logfile.log"
+
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_FILE_LOG)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+    def remove_start_client(self, id_processing, host, password):
+
+        password_msg = password + "\n"
+        set_permission = "sudo -S "
+        command_remove = "rm -r"
+        command = "{} pkill python3".format(set_permission)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = "{} pkill java".format(set_permission)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = "{} {} monitor".format(set_permission, command_remove)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_TAR_FILE)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_FILE_DATABASE)
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = "{} {} {}".format(set_permission, command_remove, DEFAULT_FILE_LOG)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)

@@ -41,6 +41,7 @@ class DaemonClient(Daemon):
         data, status = self.zookeeper_client.get("/number_clients")
         logging.info("Get id client")
         self.id_client = data.encode("utf-8")+1
+        logging.info("Client ID: "+self.id_client)
         client_name = "/client"+str(self.id_client)
         self.zookeeper_client.create(client_name, b"True")
         self.zookeeper_client.set("/number_clients", str(self.id_client).encode("utf-8"))
