@@ -25,7 +25,7 @@ LOG_LEVEL = logging.DEBUG
 class DaemonServer(Daemon):
 
     def __init__(self, pid_file, stdin=DEFAULT_INPUT, stdout=DEFAULT_OUTPUT, stderr=DEFAULT_ERR,
-                 server_list=DEFAULT_SERVER_LIST, password=DEFAULT_PASSWORD):
+                 server_list=DEFAULT_SERVER_LIST, password=DEFAULT_PASSWORD, id_server="0"):
 
         super().__init__(pid_file, std_in=stdin, std_out=stdout, std_err=stderr)
 
@@ -33,7 +33,7 @@ class DaemonServer(Daemon):
         self.zookeeper_client = None
         self.zookeeper_server_list = server_list
         self.file_results = None
-        self.server_id = pid_file
+        self.server_id = id_server
 
     @staticmethod
     def zookeeper_is_running():
@@ -141,7 +141,9 @@ class DaemonServer(Daemon):
 
         logging.info("Refresh state local server")
         server_name = "/server" + str(self.server_id)
+        logging.info(server_name)
         self.zookeeper_client.set(server_name, b"True")
+        logging.info("Refresh state local server")
 
     @staticmethod
     def get_date_hour():
@@ -228,13 +230,11 @@ class DaemonServer(Daemon):
                 if self.zookeeper_token_leader():
 
                     self.clear_state_monitor()
-
-                    if self.set_zookeeper_signal_sync():
-
-                        self.refresh_state_server()
-                        time.sleep(5)
-                        datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
-                        self.write_database(datetime_now, list_registered_servers, list_registered_clients)
+                    self.set_zookeeper_signal_sync()
+                    self.refresh_state_server()
+                    time.sleep(5)
+                    datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
+                    self.write_database(datetime_now, list_registered_servers, list_registered_clients)
 
                 else:
 
@@ -373,21 +373,21 @@ def main():
 
         logging.info("\t Starting daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt",
-                                     server_list=args.hosts, password=args.password)
+                                     server_list=args.hosts, password=args.password, id_server=str(args.id))
         daemon_server.start()
 
     elif sys.argv[1] == '--stop':
 
         logging.info("\t Stop daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
-                                     server_list=args.hosts, password=args.password)
+                                     server_list=args.hosts, password=args.password, id_server=str(args.id))
         daemon_server.stop()
 
     elif sys.argv[1] == '--restart':
 
         logging.info("\t Restart daemon server")
         daemon_server = DaemonServer(pid_file=pid_file, stdin="input_daemon.txt", stdout=stdout,
-                                     server_list=args.hosts, password=args.password)
+                                     server_list=args.hosts, password=args.password, id_server=str(args.id))
         daemon_server.restart()
 
     else:
