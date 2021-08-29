@@ -210,26 +210,26 @@ class DaemonServer(Daemon):
 
         num_server, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
         number_servers = str(num_server.decode(DEFAULT_CODIFICATION_FILE))
-        logging.info("NumberServers: {}".format(number_servers))
+        logging.info("Number Servers: {}".format(number_servers))
         client_id, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
         number_clients = str(client_id.decode(DEFAULT_CODIFICATION_FILE))
-        logging.info("NumberClients: " + number_clients)
+        logging.info("Number Clients: {}".format(number_clients))
         logging.info("\nServerList:")
 
         for i in range(int(number_servers)):
 
-            server_name = "/server" + str(i+1)
+            server_name = "/server".format(str(i+1))
             server_id, _ = self.zookeeper_client.get(server_name)
-            logging.info(server_name+": " + str(server_id.decode(DEFAULT_CODIFICATION_FILE)))
+            logging.info("{}: {}".format(server_name, str(server_id.decode(DEFAULT_CODIFICATION_FILE))))
             list_registered_servers.append(str(server_id.decode(DEFAULT_CODIFICATION_FILE)))
 
         logging.info("\nClientList:")
 
         for i in range(int(number_clients)):
 
-            client_name = "/client" + str(i+1)
+            client_name = "/client".format(str(i+1))
             client_id, _ = self.zookeeper_client.get(client_name)
-            logging.info(client_name + ": ", str(client_id.decode(DEFAULT_CODIFICATION_FILE)))
+            logging.info("{}: {}".format(client_name, str(client_id.decode(DEFAULT_CODIFICATION_FILE))))
             list_registered_clients.append(str(client_id.decode(DEFAULT_CODIFICATION_FILE)))
 
         return datetime_now, list_registered_servers, list_registered_clients
@@ -272,12 +272,12 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_servers)):
 
-            server_name = "/server" + str(i+1)
+            server_name = "/server{}".format(str(i+1))
             self.zookeeper_client.set(server_name, b"False")
 
         for i in range(int(number_clients)):
 
-            client_name = "/client" + str(i+1)
+            client_name = "/client{}".format(str(i+1))
             self.zookeeper_client.set(client_name, b"False")
 
     def background_follower(self):
