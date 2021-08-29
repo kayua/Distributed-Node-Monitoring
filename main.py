@@ -216,7 +216,7 @@ def remove_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - " + hostname_list[i] + " Stopping")
+        print("         - {} Stopping monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remove_stop_daemon(str(i), host_list, password_list[i])
 
