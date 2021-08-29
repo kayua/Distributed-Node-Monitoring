@@ -5,7 +5,6 @@ import subprocess
 import sys
 import time
 import psutil
-import csv
 
 from datetime import datetime
 from kazoo.client import KazooClient
