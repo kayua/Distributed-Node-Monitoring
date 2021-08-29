@@ -102,11 +102,11 @@ class Channel:
     def remote_start_zookeeper(self, id_processing, host, password):
 
         password_super_user = password + "\n"
-        set_permission = "sudo -S"
-        command_echo = "echo"
-        command_start = "start"
+        set_permission = "sudo -S "
+        command_echo = " echo "
+        command_start = " start "
 
-        command_exec_permission = "chmod -R +x"
+        command_exec_permission = " chmod -R +x "
         command = "{} {} {}".format(set_permission, command_exec_permission, DEFAULT_PATH_ZOOKEEPER_SERVER)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
@@ -134,18 +134,18 @@ class Channel:
         set_permission = "sudo -S "
         password_super_user = password + "\n"
         command_daemon_server = "python3 {}".format(DEFAULT_DAEMON_MONITOR)
-        command_start_server = "--stop true "
+        command_start_server = " --stop true "
         command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
-        command = command + " --host "+host
+        command = command + " --hosts "+host
         print(command)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_super_user)
         channel_stdin.flush()
 
-        command_start_server = "--start true "
+        command_start_server = " --start true "
         command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
-        command = command + " --host "+host
+        command = command + " --hosts "+host
         print(command)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)

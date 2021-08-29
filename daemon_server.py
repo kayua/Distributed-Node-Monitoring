@@ -218,7 +218,7 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_servers)):
 
-            server_name = "/server".format(str(i+1))
+            server_name = "/server{}".format(str(i+1))
             server_id, _ = self.zookeeper_client.get(server_name)
             logging.info("{}: {}".format(server_name, str(server_id.decode(DEFAULT_CODIFICATION_FILE))))
             list_registered_servers.append(str(server_id.decode(DEFAULT_CODIFICATION_FILE)))
@@ -227,7 +227,7 @@ class DaemonServer(Daemon):
 
         for i in range(int(number_clients)):
 
-            client_name = "/client".format(str(i+1))
+            client_name = "/client{}".format(str(i+1))
             client_id, _ = self.zookeeper_client.get(client_name)
             logging.info("{}: {}".format(client_name, str(client_id.decode(DEFAULT_CODIFICATION_FILE))))
             list_registered_clients.append(str(client_id.decode(DEFAULT_CODIFICATION_FILE)))
