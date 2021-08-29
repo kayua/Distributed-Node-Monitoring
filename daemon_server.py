@@ -154,7 +154,7 @@ class DaemonServer(Daemon):
     def refresh_state_server(self):
 
         logging.info("Refresh state local server")
-        server_name = "/server" + str(self.server_id)
+        server_name = "/server{}".format(str(self.server_id))
         logging.info(server_name)
         self.zookeeper_client.set(server_name, b"True")
         logging.info("Refresh state local server")
@@ -169,25 +169,25 @@ class DaemonServer(Daemon):
         logging.info("Creating data file")
 
         self.file_results = open(DEFAULT_FILE_OUTPUT, '+a')
-        self.file_results.write('Start monitor: Hour:' + datetime_now)
+        self.file_results.write('Start monitor: Hour: {}'.format(datetime_now))
         self.file_results.close()
 
     def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
         self.file_results = open(DEFAULT_FILE_OUTPUT, '+a')
-        self.file_results.write('Snapshot Monitor: Hour:'+datetime_now+'\n')
+        self.file_results.write('Snapshot Monitor: Hour: {}\n'.format(datetime_now))
         self.file_results.write('  Servers: \n')
 
         for i in list_servers:
 
-            self.file_results.write('    -'+str(i)+'\n')
+            self.file_results.write('    - {}\n'.format(str(i)))
 
         self.file_results.write('  Clients: \n')
 
         for i in list_clients:
 
-            self.file_results.write('    -'+str(i))
+            self.file_results.write('    - {}\n'.format(str(i)))
 
         self.file_results.write('\n')
         self.file_results.close()
@@ -202,15 +202,15 @@ class DaemonServer(Daemon):
 
         signal_sync, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_SYNC)
         signal = str(signal_sync.decode(DEFAULT_CODIFICATION_FILE))
-        logging.info("Received signal: " + signal)
+        logging.info("Received signal: {}".format(signal))
 
         signal_hour, _ = self.zookeeper_client.get(DEFAULT_SIGNAL_HOUR)
         datetime_now = str(signal_hour.decode(DEFAULT_CODIFICATION_FILE))
-        logging.info("Hour: " + datetime_now)
+        logging.info("Hour: {}".format(datetime_now))
 
         num_server, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
         number_servers = str(num_server.decode(DEFAULT_CODIFICATION_FILE))
-        logging.info("NumberServers:" + number_servers)
+        logging.info("NumberServers: {}".format(number_servers))
         client_id, _ = self.zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
         number_clients = str(client_id.decode(DEFAULT_CODIFICATION_FILE))
         logging.info("NumberClients: " + number_clients)
