@@ -38,7 +38,7 @@ class DaemonServer(Daemon):
     @staticmethod
     def zookeeper_is_running():
 
-        logging.info("Cheking if Zookeeper is running")
+        logging.info("Checking if Zookeeper is running")
         process_status = [proc for proc in psutil.process_iter() if proc.name() == 'zkServer.sh']
 
         if process_status:
@@ -154,13 +154,14 @@ class DaemonServer(Daemon):
 
         logging.info("Creating data file")
 
-        self.file_results = open(DEFAULT_FILE_OUTPUT, 'w')
+        self.file_results = open(DEFAULT_FILE_OUTPUT, '+a')
         self.file_results.write('Start monitor: Hour:' + datetime_now)
+        self.file_results.close()
 
     def write_database(self, datetime_now, list_servers, list_clients):
 
         logging.info("Write database of monitoring")
-
+        self.file_results = open(DEFAULT_FILE_OUTPUT, '+a')
         self.file_results.write('Snapshot Monitor: Hour:'+datetime_now+'\n')
         self.file_results.write('  Servers: \n')
 
@@ -175,6 +176,7 @@ class DaemonServer(Daemon):
             self.file_results.write('    -'+str(i))
 
         self.file_results.write('\n')
+        self.file_results.close()
         pass
 
     def get_state_monitor(self):
