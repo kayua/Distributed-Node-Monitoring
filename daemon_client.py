@@ -63,7 +63,8 @@ class DaemonClient(Daemon):
     def refresh_register(self):
 
         logging.info("Refresh register")
-        client_name = "/client" + str(self.id_client)
+        client_name = "/client" + str(self.id_client-1)
+        logging.info(client_name)
         self.zookeeper_client.set(client_name, b"True")
 
     def background_monitor(self):

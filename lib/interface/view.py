@@ -19,6 +19,7 @@ def print_help():
     print(" Monitor Servers:\n")
     print("     - ServerInstall     hostname userName password")
     print("     - ServerStart")
+    print("     - ServerUninstall")
     print("     - ServerStop \n")
     print(" Nodes clients:\n")
     print("     - ClientInstall     hostname userName password")

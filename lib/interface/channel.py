@@ -145,19 +145,40 @@ class Channel:
         print(channel_stdout.read())
         print(channel_stderr.read())
 
-    def remote_stop_daemon(self, id_processing, host, password):
+    def remove_stop_daemon(self, id_processing, host, password):
 
         password_msg = password + "\n"
         set_permission = "sudo -S "
-        command_stop = " stop "
-        command_daemon_server = "python3 monitor/daemon_server.py "
-        command = set_permission + DEFAULT_ZOOKEEPER_SERVER + command_stop
+        command = set_permission + "pkill python3"
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)
         channel_stdin.flush()
-        command = set_permission + command_daemon_server + '--stop true --id '+id_processing + ' --password '+password
-        command = command + " --host "+host
+
+        command = set_permission + "pkill java"
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = set_permission + "rm -r monitor"
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = set_permission + "rm -r monitor.tar.gz"
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+
+        command = set_permission + "rm -r database.csv"
+        channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
+        time.sleep(DEFAULT_DELAY_COMMAND_SEND)
+        channel_stdin.write(password_msg)
+        channel_stdin.flush()
+        command = set_permission + "rm -r logfile.log"
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_msg)

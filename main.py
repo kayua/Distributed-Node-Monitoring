@@ -188,7 +188,33 @@ def stop_servers():
         channel = Channel()
         print("         - " + hostname_list[i] + " Stopping")
         channel.connect(hostname_list[i], username_list[i], password_list[i])
-        channel.remote_stop_daemon(str(i), host_list, password_list[i])
+        channel.remove_stop_daemon(str(i), host_list, password_list[i])
+
+    clear_metadata(host_list)
+    print("\n")
+
+
+def remove_servers():
+
+    saved_nodes = get_set_servers()
+    hostname_list, username_list, password_list = [], [], []
+
+    print("\n     Starting Servers: \n")
+
+    for i in saved_nodes:
+
+        hostname_list.append(i.split(":")[0])
+        username_list.append(i.split(":")[1])
+        password_list.append(i.split(":")[2])
+
+    host_list = ":2181,".join(hostname_list) + ":2181"
+
+    for i in range(len(hostname_list)):
+
+        channel = Channel()
+        print("         - " + hostname_list[i] + " Stopping")
+        channel.connect(hostname_list[i], username_list[i], password_list[i])
+        channel.remove_stop_daemon(str(i), host_list, password_list[i])
 
     clear_metadata(host_list)
     print("\n")
@@ -241,6 +267,11 @@ def choice_command(commands):
 
         print("\n     Stopping Servers: \n")
         stop_servers()
+
+    elif commands[0] == "ServerUninstall":
+
+        print("\n     Stopping Servers: \n")
+        remove_servers()
 
     elif commands[0] == "exit":
 

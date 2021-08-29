@@ -286,7 +286,7 @@ class DaemonServer(Daemon):
                     if self.get_zookeeper_signal_sync():
 
                         self.refresh_state_server()
-                        time.sleep(5)
+
                         datetime_now, list_registered_servers, list_registered_clients = self.get_state_monitor()
                         self.write_database(datetime_now, list_registered_servers, list_registered_clients)
 
