@@ -84,7 +84,7 @@ class DaemonClient(Daemon):
             time.sleep(DEFAULT_TICK)
 
     def run(self):
-
+        logging.info("\t  00000000000000000000")
         self.initialize_client_server()
         self.register_client()
         self.background_monitor()
@@ -106,6 +106,9 @@ def main():
     help_msg = "Start server in background"
     parser.add_argument('--start', help=help_msg, required=False)
 
+    help_msg = "Processing id"
+
+    parser.add_argument('--id', help=help_msg,default=0)
     help_msg = "Stop server in background"
     parser.add_argument('--stop', help=help_msg, required=False)
 
@@ -155,6 +158,7 @@ def main():
         logging.info("\t Starting daemon server")
         daemon_client = DaemonClient(pid_file=pid_file, stdin="input_daemon.txt",
                                      server_list=args.hosts, password=args.password)
+        logging.info("\t Starting daemon server")
         daemon_client.start()
 
     elif sys.argv[1] == '--stop':

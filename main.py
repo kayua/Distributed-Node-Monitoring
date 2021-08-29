@@ -221,7 +221,7 @@ def start_client(host, username, password):
     channel = Channel()
     print("         - {} Starting client".format(host))
     channel.connect(host, username, password)
-    channel.remove_start_client(1, host_list, password)
+    channel.remote_start_client(host_list, password)
     print("\n")
 
 
