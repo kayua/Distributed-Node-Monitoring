@@ -9,6 +9,8 @@ from lib.interface.view import print_help
 DEFAULT_SERVER_LOGS = "servers/server_list.log"
 DEFAULT_SETTINGS = "settings/config.txt"
 DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
+DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
+DEFAULT_PATH_NUM_SERVERS = "/number_servers"
 
 
 def add_set_servers(hostname, username, password):
@@ -74,15 +76,15 @@ def register_metadata(hosts, num_servers):
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
 
-    if not zookeeper_client.exists("/number_clients"):
+    if not zookeeper_client.exists(DEFAULT_PATH_NUM_CLIENTS):
 
-        zookeeper_client.create("/number_clients", b"0")
+        zookeeper_client.create(DEFAULT_PATH_NUM_CLIENTS, b"0")
 
     number_servers_byte = num_servers.encode("utf-8")
 
-    if not zookeeper_client.exists("/number_servers"):
+    if not zookeeper_client.exists(DEFAULT_PATH_NUM_SERVERS):
 
-        zookeeper_client.create("/number_servers", number_servers_byte)
+        zookeeper_client.create(DEFAULT_PATH_NUM_SERVERS, number_servers_byte)
 
     print("\n         - Create data struct in Servers")
 
@@ -111,23 +113,22 @@ def clear_metadata(hosts):
 
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
-    number_clients, _ = zookeeper_client.get("/number_clients")
+    number_clients, _ = zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
 
     for i in range(0, int(number_clients.decode("utf-8"))):
 
         client_name = "/client" + str(i)
         zookeeper_client.delete(client_name, recursive=True)
 
-    number_servers, _ = zookeeper_client.get("/number_servers")
-
-    zookeeper_client.delete("/number_servers", recursive=True)
+    number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
     for i in range(0, int(number_servers.decode("utf-8"))):
 
         server_name = "/server" + str(i)
         zookeeper_client.delete(server_name, recursive=True)
 
-    zookeeper_client.delete("/number_servers", recursive=True)
+    zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
+    zookeeper_client.delete(DEFAULT_PATH_NUM_CLIENTS, recursive=True)
     zookeeper_client.delete("/signal_sync", recursive=True)
     zookeeper_client.delete("/server_hour", recursive=True)
 
