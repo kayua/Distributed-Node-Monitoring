@@ -200,7 +200,7 @@ class Channel:
         command_daemon_server = "python3 {}".format(DEFAULT_DAEMON_CLIENT)
         command_start_server = " --start true "
         command = set_permission + command_daemon_server + command_start_server
-        command = command + " --host " + host
+        command = command + " --hosts " + host
         command = command + " --password " + password
         print(command)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)

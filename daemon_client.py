@@ -88,6 +88,7 @@ class DaemonClient(Daemon):
             time.sleep(DEFAULT_TICK)
 
     def run(self):
+
         logging.info("\t  00000000000000000000")
         self.initialize_client_server()
         self.register_client()
