@@ -11,6 +11,9 @@ DEFAULT_SETTINGS = "settings/config.txt"
 DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
 DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
 DEFAULT_PATH_NUM_SERVERS = "/number_servers"
+DEFAULT_SIGNAL_SYNC = "/signal_sync"
+DEFAULT_SIGNAL_HOUR = "/server_hour"
+DEFAULT_CODIFICATION_FILE = "utf-8"
 
 
 def add_set_servers(hostname, username, password):
@@ -80,7 +83,7 @@ def register_metadata(hosts, num_servers):
 
         zookeeper_client.create(DEFAULT_PATH_NUM_CLIENTS, b"0")
 
-    number_servers_byte = num_servers.encode("utf-8")
+    number_servers_byte = num_servers.encode(DEFAULT_CODIFICATION_FILE)
 
     if not zookeeper_client.exists(DEFAULT_PATH_NUM_SERVERS):
 
@@ -98,13 +101,13 @@ def register_metadata(hosts, num_servers):
 
     print("\n         - Synchronizing server nodes")
 
-    if not zookeeper_client.exists("/signal_sync"):
+    if not zookeeper_client.exists(DEFAULT_SIGNAL_SYNC):
 
-        zookeeper_client.create("/signal_sync", b"False")
+        zookeeper_client.create(DEFAULT_SIGNAL_SYNC, b"False")
 
-    if not zookeeper_client.exists("/server_hour"):
+    if not zookeeper_client.exists(DEFAULT_SIGNAL_HOUR):
 
-        zookeeper_client.create("/server_hour", get_date_hour().encode('utf-8'))
+        zookeeper_client.create(DEFAULT_SIGNAL_HOUR, get_date_hour().encode(DEFAULT_CODIFICATION_FILE))
 
 
 def clear_metadata(hosts):
@@ -115,22 +118,22 @@ def clear_metadata(hosts):
     zookeeper_client.start()
     number_clients, _ = zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
 
-    for i in range(0, int(number_clients.decode("utf-8"))):
+    for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
         client_name = "/client" + str(i)
         zookeeper_client.delete(client_name, recursive=True)
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
-    for i in range(0, int(number_servers.decode("utf-8"))):
+    for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
         server_name = "/server" + str(i)
         zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
     zookeeper_client.delete(DEFAULT_PATH_NUM_CLIENTS, recursive=True)
-    zookeeper_client.delete("/signal_sync", recursive=True)
-    zookeeper_client.delete("/server_hour", recursive=True)
+    zookeeper_client.delete(DEFAULT_SIGNAL_SYNC, recursive=True)
+    zookeeper_client.delete(DEFAULT_SIGNAL_HOUR, recursive=True)
 
 
 def start_servers():
