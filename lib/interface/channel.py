@@ -131,12 +131,13 @@ class Channel:
 
     def remote_start_monitors(self, id_processing, host, password):
 
-        set_permission = "sudo -S"
+        set_permission = "sudo -S "
         password_super_user = password + "\n"
         command_daemon_server = "python3 {}".format(DEFAULT_DAEMON_MONITOR)
         command_start_server = "--stop true "
         command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
         command = command + " --host "+host
+        print(command)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_super_user)
@@ -145,6 +146,7 @@ class Channel:
         command_start_server = "--start true "
         command = set_permission + command_daemon_server+command_start_server + "--id " + id_processing + ' --password '+ password
         command = command + " --host "+host
+        print(command)
         channel_stdin, channel_stdout, channel_stderr = self.connection_ssh.exec_command(command)
         time.sleep(DEFAULT_DELAY_COMMAND_SEND)
         channel_stdin.write(password_super_user)
