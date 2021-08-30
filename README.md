@@ -8,22 +8,6 @@ Simple implementation nodes monitor using Apache Zookeeper Server
 
 
     Python3(main.py):
-        
-print("")
-    print(" Monitor Servers:\n")
-    print("     - ServerInstall     hostname userName password")
-    print("     - ServerStart")
-    print("     - ServerUninstall")
-    print("     - ServerStop \n")
-    print(" Nodes clients:\n")
-    print("     - ClientInstall     hostname userName password")
-    print("     - ClientAdd         hostname userName password")
-    print("     - ClientRemove      hostname userName password\n")
-    print(" Monitor:\n")
-    print("     - AllState")
-    print("     - ClientState       hostname userName password")
-    print("     - MonitorSettings    \n\n")
-    print("")
 
     Monitor Servers:                            Parameters
 
