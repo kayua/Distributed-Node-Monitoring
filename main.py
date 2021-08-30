@@ -1,3 +1,5 @@
+import argparse
+import logging
 import sys
 import time
 from datetime import datetime
@@ -6,30 +8,32 @@ from lib.interface.channel import Channel
 from lib.interface.view import View
 from lib.interface.view import print_help
 
-DEFAULT_SERVER_LOGS = "servers/server_list.log"
-DEFAULT_CLIENTS_LOGS = "servers/client_list.log"
-DEFAULT_SETTINGS = "settings/config.txt"
-DEFAULT_ZOOKEEPER_SETTINGS = "monitor/apache-zookeeper-3.6.1/conf/zoo.cfg"
-DEFAULT_PATH_NUM_CLIENTS = "/number_clients"
-DEFAULT_PATH_NUM_SERVERS = "/number_servers"
-DEFAULT_SIGNAL_SYNC = "/signal_sync"
-DEFAULT_SIGNAL_HOUR = "/server_hour"
-DEFAULT_CODIFICATION_FILE = "utf-8"
+DEFAULT_SERVER_LOGS = 'servers/server_list.log'
+DEFAULT_CLIENTS_LOGS = 'servers/client_list.log'
+DEFAULT_SETTINGS = 'settings/config.txt'
+DEFAULT_ZOOKEEPER_SETTINGS = 'monitor/apache-zookeeper-3.6.1/conf/zoo.cfg'
+DEFAULT_PATH_NUM_CLIENTS = '/number_clients'
+DEFAULT_PATH_NUM_SERVERS = '/number_servers'
+DEFAULT_SIGNAL_SYNC = '/signal_sync'
+DEFAULT_SIGNAL_HOUR = '/server_hour'
+DEFAULT_CODIFICATION_FILE = 'utf-8'
+TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 DEFAULT_NUMBER_CLIENTS = 0
+LOG_LEVEL = logging.DEBUG
 
 
 def add_set_servers(hostname, username, password):
 
-    file_servers = open(DEFAULT_SERVER_LOGS, "a+")
-    new_server = "{}:{}:{}-".format(hostname, username, password)
+    file_servers = open(DEFAULT_SERVER_LOGS, 'a+')
+    new_server = '{}:{}:{}-'.format(hostname, username, password)
     file_servers.write(new_server)
     file_servers.close()
 
 
 def add_set_client(hostname, username, password):
 
-    file_clients = open(DEFAULT_CLIENTS_LOGS, "a+")
-    new_client = "{}:{}:{}-".format(hostname, username, password)
+    file_clients = open(DEFAULT_CLIENTS_LOGS, 'a+')
+    new_client = '{}:{}:{}-'.format(hostname, username, password)
     file_clients.write(new_client)
     file_clients.close()
 
@@ -328,6 +332,24 @@ def choice_command(commands):
 
 
 def main():
+
+    parser = argparse.ArgumentParser(description='Monitor nodes')
+
+    help_msg = 'Level debug define'
+    parser.add_argument('--log', '-l', help=help_msg, default=logging.INFO, type=int)
+
+    args = parser.parse_args()
+
+    if args.log == logging.DEBUG:
+
+        logging.basicConfig(filename='log_output.log', filemode='+a',
+                            format='%(asctime)s %(levelname)s {%(module)s} [%(funcName)s] %(message)s',
+                            datefmt=TIME_FORMAT, level=args.log)
+
+    else:
+
+        logging.basicConfig(filename='log_output.log', filemode='+a', format='%(asctime)s %(message)s',
+                            datefmt=TIME_FORMAT, level=args.log)
 
     init_view()
 
