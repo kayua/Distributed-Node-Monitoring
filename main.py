@@ -164,7 +164,7 @@ def register_metadata(hosts, num_servers):
 def clear_metadata(hosts):
 
     print('     Remove registers of session')
-
+    logging.debug('Clear metadata')
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
     number_clients, _ = zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
@@ -172,6 +172,7 @@ def clear_metadata(hosts):
     for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
         client_name = '/client{}'.format(str(i+1))
+        logging.debug(client_name)
         zookeeper_client.delete(client_name, recursive=True)
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
@@ -179,12 +180,18 @@ def clear_metadata(hosts):
     for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
         server_name = '/server{}'.format(str(i+1))
+        logging.debug(server_name)
         zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
+    logging.debug(DEFAULT_PATH_NUM_SERVERS)
     zookeeper_client.delete(DEFAULT_PATH_NUM_CLIENTS, recursive=True)
+    logging.debug(DEFAULT_PATH_NUM_CLIENTS)
     zookeeper_client.delete(DEFAULT_SIGNAL_SYNC, recursive=True)
+    logging.debug(DEFAULT_SIGNAL_SYNC)
     zookeeper_client.delete(DEFAULT_SIGNAL_HOUR, recursive=True)
+    logging.debug(DEFAULT_SIGNAL_HOUR)
+    logging.debug('client_name')
 
 
 def start_servers():
