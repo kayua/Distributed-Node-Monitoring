@@ -130,14 +130,14 @@ def clear_metadata(hosts):
 
     for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
-        client_name = "/client{}".format(str(i))
+        client_name = "/client{}".format(str(i+1))
         zookeeper_client.delete(client_name, recursive=True)
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
     for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
-        server_name = "/server{}".format(str(i))
+        server_name = "/server{}".format(str(i+1))
         zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
@@ -178,6 +178,7 @@ def start_servers():
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remote_start_monitors(str(i+1), host_list, password_list[i])
 
+    clear_metadata(host_list)
     register_metadata(host_list, str(len(hostname_list)))
     print("\n")
 

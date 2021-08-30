@@ -68,7 +68,7 @@ class DaemonClient(Daemon):
     def refresh_register(self):
 
         logging.info("Refresh register")
-        client_name = "/client{}".format(str(self.id_client-1))
+        client_name = "/client{}".format(str(self.id_client))
         logging.info(client_name)
         self.zookeeper_client.set(client_name, b"True")
 
@@ -89,7 +89,6 @@ class DaemonClient(Daemon):
 
     def run(self):
 
-        logging.info("\t  00000000000000000000")
         self.initialize_client_server()
         self.register_client()
         self.background_monitor()
@@ -112,8 +111,8 @@ def main():
     parser.add_argument('--start', help=help_msg, required=False)
 
     help_msg = "Processing id"
-
     parser.add_argument('--id', help=help_msg,default=0)
+
     help_msg = "Stop server in background"
     parser.add_argument('--stop', help=help_msg, required=False)
 
