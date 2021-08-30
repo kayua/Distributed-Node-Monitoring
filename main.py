@@ -191,7 +191,7 @@ def clear_metadata(hosts):
     logging.debug(DEFAULT_SIGNAL_SYNC)
     zookeeper_client.delete(DEFAULT_SIGNAL_HOUR, recursive=True)
     logging.debug(DEFAULT_SIGNAL_HOUR)
-    logging.debug('client_name')
+    logging.debug('Clean metadata Zookeeper Server')
 
 
 def start_servers():
