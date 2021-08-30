@@ -276,12 +276,12 @@ def init_view():
     for i in saved_nodes:
         print(i.split(':')[0], end='')
 
-    print("\n")
+    print('\n')
 
 
 def choice_command(commands):
 
-    if commands[0] == "ServerInstall":
+    if commands[0] == 'ServerInstall':
 
         print("\n     Please wait: Installing")
 
@@ -294,7 +294,7 @@ def choice_command(commands):
             print("\n     Successfully Installation\n")
             add_set_servers(commands[-3], commands[-2], commands[-1])
 
-    elif commands[0] == "ClientInstall":
+    elif commands[0] == 'ClientInstall':
 
         print("\n     Please wait: Installing")
 
@@ -306,29 +306,33 @@ def choice_command(commands):
             print("\n     Successfully Installation\n")
             add_set_client(commands[-3], commands[-2], commands[-1])
 
-    elif commands[0] == "ServerStart":
+    elif commands[0] == 'ServerStart':
 
         print("\n     Starting Servers: \n")
         start_servers()
 
-    elif commands[0] == "ServerStop":
+    elif commands[0] == 'ServerStop':
 
         print("\n     Stopping Servers: \n")
         stop_servers()
 
-    elif commands[0] == "ServerUninstall":
+    elif commands[0] == 'ServerUninstall':
 
         print("\n     Stopping Servers: \n")
         remove_servers()
 
-    elif commands[0] == "ClientAdd":
+    elif commands[0] == 'ClientAdd':
 
         print("\n     Starting Client: \n")
         start_client(commands[-3], commands[-2], commands[-1])
 
-    elif commands[0] == "exit":
+    elif commands[0] == 'exit':
 
         exit(0)
+
+    else:
+
+        print('Command Error')
 
 
 def main():
