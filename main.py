@@ -360,7 +360,7 @@ def main():
     while True:
 
         commands = input('Command > ')
-        commands = commands.split(" ")
+        commands = commands.split('')
         choice_command(commands)
 
 
