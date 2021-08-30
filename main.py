@@ -24,37 +24,45 @@ LOG_LEVEL = logging.INFO
 
 def add_set_servers(hostname, username, password):
 
+    logging.debug('Add server in log file')
     file_servers = open(DEFAULT_SERVER_LOGS, 'a+')
     new_server = '{}:{}:{}-'.format(hostname, username, password)
+    logging.debug(new_server)
     file_servers.write(new_server)
     file_servers.close()
 
 
 def add_set_client(hostname, username, password):
 
+    logging.debug('Add clients in log file')
     file_clients = open(DEFAULT_CLIENTS_LOGS, 'a+')
     new_client = '{}:{}:{}-'.format(hostname, username, password)
+    logging.debug(new_client)
     file_clients.write(new_client)
     file_clients.close()
 
 
 def get_set_servers():
 
+    logging.debug('Get server list')
     file_servers = open(DEFAULT_SERVER_LOGS, 'r')
     list_servers = file_servers.read().split('-')
+    logging.debug(' '.join(list_servers[:-1]))
     return list_servers[:-1]
 
 
 def install_servers(hostname, user, password):
 
+    logging.debug('Install Servers')
     channel = Channel()
 
     if channel.connect(hostname, user, password):
-
+        logging.debug('Reset connect')
         return True
 
     channel.install_monitor()
     channel.remote_access('')
+    logging.debug('Successfully installation')
 
 
 def install_client(hostname, user, password):
