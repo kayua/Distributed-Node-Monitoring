@@ -9,14 +9,40 @@ Simple implementation nodes monitor using Apache Zookeeper Server
 
     Python3(main.py):
         
-        -h, --help                |   Show this help message and exit
-        --output                  |   Full name of the output file with analysis results (default=sbrc21.txt)
-        --append                  |   Append output logging file with analysis results (default=False)
-        --trials                  |   Number of trials (default=1)
-        --start_trials            |   Start trials (default=0)
-        --skip_train              |   Skip training of the machine learning model
-        --campaign                |   Campaign [demo, sbrc21] (default=demo)
-        --verbosity               |   Verbosity logging level (INFO=20 DEBUG=10)
+print("")
+    print(" Monitor Servers:\n")
+    print("     - ServerInstall     hostname userName password")
+    print("     - ServerStart")
+    print("     - ServerUninstall")
+    print("     - ServerStop \n")
+    print(" Nodes clients:\n")
+    print("     - ClientInstall     hostname userName password")
+    print("     - ClientAdd         hostname userName password")
+    print("     - ClientRemove      hostname userName password\n")
+    print(" Monitor:\n")
+    print("     - AllState")
+    print("     - ClientState       hostname userName password")
+    print("     - MonitorSettings    \n\n")
+    print("")
+
+    Monitor Servers:                            Parameters
+
+        ServerInstall                |   hostname userName password
+        ServerStart                  |              -
+        ServerUninstall              |   
+        ServerStop                   |   
+
+    Nodes clients:
+
+        ClientInstall                |   hostname userName password
+        ClientAdd                    |   hostname userName password
+        ClientRemove                 |   hostname userName password
+    
+    Monitor:
+
+        AllState                     |              -
+        ClientState                  |   hostname userName password
+        MonitorSettings              |              -
 
     --------------------------------------------------------------
    
