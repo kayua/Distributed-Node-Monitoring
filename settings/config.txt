@@ -3,3 +3,7 @@ initLimit=10
 syncLimit=5
 clientPort=2181
 dataDir=monitor/server_id
+
+server.1=192.168.1.104:2888:3888
+server.2=192.168.1.105:2888:3888
+server.3=192.168.1.106:2888:3888
