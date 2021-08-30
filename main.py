@@ -177,8 +177,14 @@ def start_servers():
         print("         - {} Starting monitor".format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remote_start_monitors(str(i+1), host_list, password_list[i])
+    try:
 
-    clear_metadata(host_list)
+        clear_metadata(host_list)
+
+    except:
+
+        pass
+
     register_metadata(host_list, str(len(hostname_list)))
     print("\n")
 
