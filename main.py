@@ -67,17 +67,20 @@ def install_servers(hostname, user, password):
 
 def install_client(hostname, user, password):
 
+    logging.debug('Install Clients')
     channel = Channel()
 
     if channel.connect(hostname, user, password):
-
+        logging.debug('Reset connect')
         return True
 
     channel.install_client()
+    logging.debug('Successfully installation')
 
 
 def create_settings_servers(list_servers):
 
+    logging.debug('Creating Zookeeper settings')
     zookeeper_settings_pointer = open(DEFAULT_SETTINGS, '+a')
     zookeeper_settings_pointer.write('\n')
 
@@ -87,6 +90,7 @@ def create_settings_servers(list_servers):
         zookeeper_settings_pointer.write(zookeeper_server)
 
     zookeeper_settings_pointer.close()
+    logging.debug('Successfully create settings')
 
 
 def get_date_hour():
@@ -96,32 +100,39 @@ def get_date_hour():
 
 def register_metadata(hosts, num_servers):
 
+    logging.debug('Creating metadata')
     print('\n     Creating registers of session')
 
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
+    logging.debug('Initializing connection servers')
 
     if not zookeeper_client.exists(DEFAULT_PATH_NUM_CLIENTS):
 
+        logging.debug('Creating znode number clients')
         zookeeper_client.create(DEFAULT_PATH_NUM_CLIENTS, b'0')
 
     number_servers_byte = num_servers.encode(DEFAULT_CODIFICATION_FILE)
 
     if not zookeeper_client.exists(DEFAULT_PATH_NUM_SERVERS):
 
+        logging.debug('Creating znode number servers')
         zookeeper_client.create(DEFAULT_PATH_NUM_SERVERS, number_servers_byte)
 
     print('\n         - Create data struct in Servers')
+    logging.debug('Creating server znodes')
 
     for i in range(int(num_servers)):
 
         server_name = '/server{}'.format(str(i+1))
+        logging.debug(server_name)
 
         if not zookeeper_client.exists(server_name):
 
             zookeeper_client.create(server_name, b'False')
 
     print('\n         - Synchronizing server nodes')
+    logging.debug('Creating signal hour and sync')
 
     if not zookeeper_client.exists(DEFAULT_SIGNAL_SYNC):
 
