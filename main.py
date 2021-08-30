@@ -40,8 +40,8 @@ def add_set_client(hostname, username, password):
 
 def get_set_servers():
 
-    file_servers = open(DEFAULT_SERVER_LOGS, "r")
-    list_servers = file_servers.read().split("-")
+    file_servers = open(DEFAULT_SERVER_LOGS, 'r')
+    list_servers = file_servers.read().split('-')
     return list_servers[:-1]
 
 
@@ -54,7 +54,7 @@ def install_servers(hostname, user, password):
         return True
 
     channel.install_monitor()
-    channel.remote_access("")
+    channel.remote_access('')
 
 
 def install_client(hostname, user, password):
@@ -70,12 +70,12 @@ def install_client(hostname, user, password):
 
 def create_settings_servers(list_servers):
 
-    zookeeper_settings_pointer = open(DEFAULT_SETTINGS, "+a")
-    zookeeper_settings_pointer.write("\n")
+    zookeeper_settings_pointer = open(DEFAULT_SETTINGS, '+a')
+    zookeeper_settings_pointer.write('\n')
 
     for i in range(len(list_servers)):
 
-        zookeeper_server = "server.{}={}:2888:3888\n".format(str(i + 1), list_servers[i])
+        zookeeper_server = 'server.{}={}:2888:3888\n'.format(str(i + 1), list_servers[i])
         zookeeper_settings_pointer.write(zookeeper_server)
 
     zookeeper_settings_pointer.close()
@@ -88,7 +88,7 @@ def get_date_hour():
 
 def register_metadata(hosts, num_servers):
 
-    print("\n     Creating registers of session")
+    print('\n     Creating registers of session')
 
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
