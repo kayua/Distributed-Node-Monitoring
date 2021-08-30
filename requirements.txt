@@ -1,0 +1,6 @@
+kazoo~=2.8.0
+pyfiglet~=0.8.post1
+paramiko~=2.7.2
+scp~=0.13.6
+psutil~=5.8.0
+cryptography~=2.8

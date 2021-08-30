@@ -1,12 +1,30 @@
-import argparse
-import logging
-import sys
-import time
 from datetime import datetime
 from kazoo.client import KazooClient
 from lib.interface.channel import Channel
 from lib.interface.view import View
 from lib.interface.view import print_help
+
+try:
+
+    import argparse
+    import logging
+    import sys
+    import time
+
+except ImportError as error:
+
+    print(error)
+    print()
+    print("1. (optional) Setup a virtual environment: ")
+    print("  python3 - m venv ~/Python3env/Monitor ")
+    print("  source ~/Python3env/Monitor/bin/activate ")
+    print()
+    print("2. Install requirements:")
+    print("  pip3 install --upgrade pip")
+    print("  pip3 install -r requirements.txt ")
+    print()
+    sys.exit(-1)
+
 
 DEFAULT_SERVER_LOGS = 'servers/server_list.log'
 DEFAULT_CLIENTS_LOGS = 'servers/client_list.log'
