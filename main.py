@@ -95,7 +95,7 @@ def register_metadata(hosts, num_servers):
 
     if not zookeeper_client.exists(DEFAULT_PATH_NUM_CLIENTS):
 
-        zookeeper_client.create(DEFAULT_PATH_NUM_CLIENTS, b"0")
+        zookeeper_client.create(DEFAULT_PATH_NUM_CLIENTS, b'0')
 
     number_servers_byte = num_servers.encode(DEFAULT_CODIFICATION_FILE)
 
@@ -103,21 +103,21 @@ def register_metadata(hosts, num_servers):
 
         zookeeper_client.create(DEFAULT_PATH_NUM_SERVERS, number_servers_byte)
 
-    print("\n         - Create data struct in Servers")
+    print('\n         - Create data struct in Servers')
 
     for i in range(int(num_servers)):
 
-        server_name = "/server{}".format(str(i+1))
+        server_name = '/server{}'.format(str(i+1))
 
         if not zookeeper_client.exists(server_name):
 
-            zookeeper_client.create(server_name, b"False")
+            zookeeper_client.create(server_name, b'False')
 
-    print("\n         - Synchronizing server nodes")
+    print('\n         - Synchronizing server nodes')
 
     if not zookeeper_client.exists(DEFAULT_SIGNAL_SYNC):
 
-        zookeeper_client.create(DEFAULT_SIGNAL_SYNC, b"False")
+        zookeeper_client.create(DEFAULT_SIGNAL_SYNC, b'False')
 
     if not zookeeper_client.exists(DEFAULT_SIGNAL_HOUR):
 
@@ -126,7 +126,7 @@ def register_metadata(hosts, num_servers):
 
 def clear_metadata(hosts):
 
-    print("     Remove registers of session")
+    print('     Remove registers of session')
 
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
@@ -134,14 +134,14 @@ def clear_metadata(hosts):
 
     for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
-        client_name = "/client{}".format(str(i+1))
+        client_name = '/client{}'.format(str(i+1))
         zookeeper_client.delete(client_name, recursive=True)
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
     for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
-        server_name = "/server{}".format(str(i+1))
+        server_name = '/server{}'.format(str(i+1))
         zookeeper_client.delete(server_name, recursive=True)
 
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
@@ -157,18 +157,18 @@ def start_servers():
 
     for i in saved_nodes:
 
-        hostname_list.append(i.split(":")[0])
-        username_list.append(i.split(":")[1])
-        password_list.append(i.split(":")[2])
+        hostname_list.append(i.split(':')[0])
+        username_list.append(i.split(':')[1])
+        password_list.append(i.split(':')[2])
 
-    host_list = ":2181,".join(hostname_list) + ":2181"
+    host_list = ':2181,'.join(hostname_list) + ':2181'
 
     create_settings_servers(hostname_list)
 
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - {} Starting Zookeeper server".format(hostname_list[i]))
+        print('         - {} Starting Zookeeper server'.format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.send_file(DEFAULT_SETTINGS, DEFAULT_ZOOKEEPER_SETTINGS)
         channel.remote_start_zookeeper(str(i+1), host_list, password_list[i])
@@ -178,7 +178,7 @@ def start_servers():
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - {} Starting monitor".format(hostname_list[i]))
+        print('         - {} Starting monitor'.format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remote_start_monitors(str(i+1), host_list, password_list[i])
     try:
@@ -190,7 +190,7 @@ def start_servers():
         pass
 
     register_metadata(host_list, str(len(hostname_list)))
-    print("\n")
+    print('\n')
 
 
 def stop_servers():
