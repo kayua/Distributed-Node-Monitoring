@@ -19,7 +19,7 @@ DEFAULT_SIGNAL_HOUR = '/server_hour'
 DEFAULT_CODIFICATION_FILE = 'utf-8'
 TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 DEFAULT_NUMBER_CLIENTS = 0
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 
 
 def add_set_servers(hostname, username, password):
@@ -198,25 +198,25 @@ def stop_servers():
     saved_nodes = get_set_servers()
     hostname_list, username_list, password_list = [], [], []
 
-    print("\n     Starting Servers: \n")
+    print('\n     Starting Servers: \n')
 
     for i in saved_nodes:
 
-        hostname_list.append(i.split(":")[0])
-        username_list.append(i.split(":")[1])
-        password_list.append(i.split(":")[2])
+        hostname_list.append(i.split(':')[0])
+        username_list.append(i.split(':')[1])
+        password_list.append(i.split(':')[2])
 
-    host_list = ":2181,".join(hostname_list) + ":2181"
+    host_list = ':2181,'.join(hostname_list) + ':2181'
 
     for i in range(len(hostname_list)):
 
         channel = Channel()
-        print("         - {} Stopping monitor".format(hostname_list[i]))
+        print('         - {} Stopping monitor'.format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remove_stop_daemon(str(i+1), host_list, password_list[i])
 
     clear_metadata(host_list)
-    print("\n")
+    print('\n')
 
 
 def start_client(host, username, password):
@@ -226,14 +226,14 @@ def start_client(host, username, password):
 
     for i in saved_nodes:
 
-        hostname_list.append(i.split(":")[0])
+        hostname_list.append(i.split(':')[0])
 
-    host_list = ":2181,".join(hostname_list) + ":2181"
+    host_list = ':2181,'.join(hostname_list) + ':2181'
     channel = Channel()
-    print("         - {} Starting client".format(host))
+    print('         - {} Starting client'.format(host))
     channel.connect(host, username, password)
     channel.remote_start_client(host_list, password)
-    print("\n")
+    print('\n')
 
 
 def remove_servers():
@@ -241,21 +241,21 @@ def remove_servers():
     saved_nodes = get_set_servers()
     hostname_list, username_list, password_list = [], [], []
 
-    print("\n     Starting Servers: \n")
+    print('\n     Starting Servers: \n')
 
     for i in saved_nodes:
 
-        hostname_list.append(i.split(":")[0])
-        username_list.append(i.split(":")[1])
-        password_list.append(i.split(":")[2])
+        hostname_list.append(i.split(':')[0])
+        username_list.append(i.split(':')[1])
+        password_list.append(i.split(':')[2])
 
-    host_list = ":2181,".join(hostname_list) + ":2181"
+    host_list = ':2181,'.join(hostname_list) + ':2181'
 
     for i in range(len(hostname_list)):
 
         channel = Channel()
 
-        print("         - {} Stopping monitor".format(hostname_list[i]))
+        print('         - {} Stopping monitor'.format(hostname_list[i]))
         channel.connect(hostname_list[i], username_list[i], password_list[i])
         channel.remove_stop_daemon(str(i), host_list, password_list[i])
 
@@ -265,16 +265,16 @@ def remove_servers():
 
 def init_view():
 
-    print("")
+    print('')
     view = View()
     view.print_view()
     print_help()
-    print("Saved Servers:", end=" ")
+    print('Saved Servers:', end='')
 
     saved_nodes = get_set_servers()
 
     for i in saved_nodes:
-        print(i.split(":")[0], end=" ")
+        print(i.split(':')[0], end='')
 
     print("\n")
 
