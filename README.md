@@ -28,13 +28,6 @@ Simple implementation nodes monitor using Apache Zookeeper Server
         ClientState                  |   hostname userName password
         MonitorSettings              |              -
 
-
-#  Run (all experiments):
-`python3 run_sbrc21.py -c sbrc`
-
-# Run (only one scenario)
-`python3 main.py`
-
 ## Requirements:
 
 `matplotlib 3.4.1`
