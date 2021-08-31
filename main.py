@@ -168,6 +168,7 @@ def clear_metadata(hosts):
     zookeeper_client = KazooClient(hosts=hosts, read_only=True)
     zookeeper_client.start()
     number_clients, _ = zookeeper_client.get(DEFAULT_PATH_NUM_CLIENTS)
+    logging.debug('Clear clients')
 
     for i in range(0, int(number_clients.decode(DEFAULT_CODIFICATION_FILE))):
 
@@ -177,12 +178,14 @@ def clear_metadata(hosts):
 
     number_servers, _ = zookeeper_client.get(DEFAULT_PATH_NUM_SERVERS)
 
+    logging.debug('Clear servers')
     for i in range(0, int(number_servers.decode(DEFAULT_CODIFICATION_FILE))):
 
         server_name = '/server{}'.format(str(i+1))
         logging.debug(server_name)
         zookeeper_client.delete(server_name, recursive=True)
 
+    logging.debug('Clear settings')
     zookeeper_client.delete(DEFAULT_PATH_NUM_SERVERS, recursive=True)
     logging.debug(DEFAULT_PATH_NUM_SERVERS)
     zookeeper_client.delete(DEFAULT_PATH_NUM_CLIENTS, recursive=True)
@@ -198,6 +201,7 @@ def start_servers():
 
     saved_nodes = get_set_servers()
     hostname_list, username_list, password_list = [], [], []
+    logging.debug('Initialize server')
 
     for i in saved_nodes:
 
@@ -208,6 +212,7 @@ def start_servers():
     host_list = ':2181,'.join(hostname_list) + ':2181'
 
     create_settings_servers(hostname_list)
+    logging.debug('Create server settings')
 
     for i in range(len(hostname_list)):
 
@@ -243,6 +248,7 @@ def stop_servers():
     hostname_list, username_list, password_list = [], [], []
 
     print('\n     Starting Servers: \n')
+    logging.debug('Stop servers')
 
     for i in saved_nodes:
 
@@ -251,6 +257,7 @@ def stop_servers():
         password_list.append(i.split(':')[2])
 
     host_list = ':2181,'.join(hostname_list) + ':2181'
+    logging.debug('Stop saved servers')
 
     for i in range(len(hostname_list)):
 
@@ -267,6 +274,7 @@ def start_client(host, username, password):
 
     saved_nodes = get_set_servers()
     hostname_list = []
+    logging.debug('Start clients')
 
     for i in saved_nodes:
 
